@@ -1,8 +1,9 @@
+import axios from "axios";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { Row, Form, Button } from "react-bootstrap";
-import { create as ipfsHttpClient } from "ipfs-http-client";
-const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+const privateApiKey = process.env.REACT_APP_PRIVATE_API_KEY || "";
+const privateSecretApiKey = process.env.REACT_APP_PRIVATE_API_SECRET_KEY || "";
 
 const Create = ({ marketplace, nft }) => {
   const [image, setImage] = useState("");
@@ -10,33 +11,53 @@ const Create = ({ marketplace, nft }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
+  console.log(privateApiKey, privateSecretApiKey);
+
+  const uploadToPinata = async (file) => {
+    const url = "https://api.pinata.cloud/pinning/pinFileToIPFS";
+    let data = new FormData();
+    data.append("file", file);
+
+    const response = await axios.post(url, data, {
+      maxContentLength: "Infinity",
+      headers: {
+        "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+        pinata_api_key: privateApiKey,
+        pinata_secret_api_key: privateSecretApiKey,
+      },
+    });
+
+    return response.data.IpfsHash;
+  };
+
   const uploadToIPFS = async (event) => {
     event.preventDefault();
     const file = event.target.files[0];
     if (typeof file !== "undefined") {
       try {
-        const result = await client.add(file);
-        console.log(result);
-        setImage(`https://ipfs.infura.io/ipfs/${result.path}`);
+        const ipfsHash = await uploadToPinata(file);
+        console.log("IPFS hash", ipfsHash);
+        setImage(`https://gateway.pinata.cloud/ipfs/${ipfsHash}`);
       } catch (error) {
-        console.log("ipfs image upload error", error);
+        console.log("Pinata upload error", error);
       }
     }
   };
   const createNFT = async () => {
     if (!image || !price || !name || !description) return;
     try {
-      const retult = await client.add(
-        JSON.stringify({ image, name, description })
-      );
-      mintThenList(retult);
+      const file = new Blob([JSON.stringify({ image, name, description })], {
+        type: "application/json",
+      });
+      const ipfsHash = await uploadToPinata(file);
+      mintThenList(ipfsHash);
     } catch (error) {
       console.log("IPFS uri upload error", error);
     }
   };
 
-  const mintThenList = async (result) => {
-    const uri = `https://ipfs.infura.io/ipfs/${result.path}`;
+  const mintThenList = async (ipfsHash) => {
+    const uri = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
     // mint nft
     await (await nft.mint(uri)).wait();
     // get tokenId of new nft
