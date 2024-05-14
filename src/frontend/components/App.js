@@ -1,112 +1,74 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
+import { Spinner } from "react-bootstrap";
+
+//Components
 import Navigation from "./Navbar";
 import Home from "./Home.js";
 import Create from "./Create.js";
 import MyListedItems from "./MyListedItems.js";
 import MyPurchases from "./MyPurchases.js";
-import MarketplaceAbi from "../contractsData/Marketplace.json";
-import MarketplaceAddress from "../contractsData/Marketplace-address.json";
-import NFTAbi from "../contractsData/NFT.json";
-import NFTAddress from "../contractsData/NFT-address.json";
-import { useState } from "react";
-import { ethers } from "ethers";
-import { Spinner } from "react-bootstrap";
+import History from "./History.js";
 
 import "./App.css";
 
-function App() {
-  const [loading, setLoading] = useState(true);
-  const [account, setAccount] = useState(null);
-  const [nft, setNFT] = useState({});
-  const [marketplace, setMarketplace] = useState({});
-  // MetaMask Login/Connect
-  const web3Handler = async () => {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    setAccount(accounts[0]);
-    // Get provider from Metamask
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // Set signer
-    const signer = provider.getSigner();
+import {
+  loadProvider,
+  loadNetwork,
+  loadAccount,
+  loadNFT,
+  loadMarketplace,
+} from "./store/interactions";
 
-    window.ethereum.on("chainChanged", (chainId) => {
+function App() {
+  const dispatch = useDispatch();
+
+  const loadBlockchainData = async () => {
+    // Initiate provider
+    const provider = await loadProvider(dispatch);
+
+    // Fetch current network's chainId (e.g. for hardhat: 31337, kovan: 42, etc.)
+    const chainId = await loadNetwork(provider, dispatch);
+
+    // Reload page when network changes
+    window.ethereum.on("chainChanged", () => {
       window.location.reload();
     });
 
-    window.ethereum.on("accountsChanged", async function (accounts) {
-      setAccount(accounts[0]);
-      await web3Handler();
+    // Fetch current account from Metamask when changed
+    window.ethereum.on("accountsChanged", async () => {
+      await loadAccount(dispatch);
     });
-    loadContracts(signer);
-  };
-  const loadContracts = async (signer) => {
-    // Get deployed copies of contracts
-    const marketplace = new ethers.Contract(
-      MarketplaceAddress.address,
-      MarketplaceAbi.abi,
-      signer
-    );
-    setMarketplace(marketplace);
-    const nft = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer);
-    setNFT(nft);
-    setLoading(false);
+
+    // Initiate contracts
+    await loadNFT(provider, chainId, dispatch);
+    await loadMarketplace(provider, chainId, dispatch);
   };
 
+  useEffect(() => {
+    loadBlockchainData();
+  }, []);
+
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="App">
         <>
-          <Navigation web3Handler={web3Handler} account={account} />
+          <Navigation web3Handler={loadBlockchainData} />
         </>
         <div>
-          {loading ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "80vh",
-              }}
-            >
-              <Spinner animation="border" style={{ display: "flex" }} />
-              <p className="mx-3 my-0">Awaiting Metamask Connection...</p>
-            </div>
-          ) : (
-            <Routes>
-              <Route
-                path="/"
-                element={<Home marketplace={marketplace} nft={nft} />}
-              />
-              <Route
-                path="/create"
-                element={<Create marketplace={marketplace} nft={nft} />}
-              />
-              <Route
-                path="/my-listed-items"
-                element={
-                  <MyListedItems
-                    marketplace={marketplace}
-                    nft={nft}
-                    account={account}
-                  />
-                }
-              />
-              <Route
-                path="/my-purchases"
-                element={
-                  <MyPurchases
-                    marketplace={marketplace}
-                    nft={nft}
-                    account={account}
-                  />
-                }
-              />
-            </Routes>
-          )}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<Create />} />
+            <Route path="/my-listed-items" element={<MyListedItems />} />
+            <Route path="/my-purchases" element={<MyPurchases />} />
+            <Route path="/my-history" element={<History />} />
+          </Routes>
         </div>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
