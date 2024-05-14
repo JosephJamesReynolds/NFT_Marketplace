@@ -2,7 +2,17 @@ import { Link } from "react-router-dom";
 import { Navbar, Nav, Button, Container } from "react-bootstrap";
 import market from "./market.png";
 
-const Navigation = ({ web3Handler, account }) => {
+//Redux components
+import { loadAccount } from "./store/interactions";
+import { useSelector, useDispatch } from "react-redux";
+
+const Navigation = () => {
+  const dispatch = useDispatch();
+  const account = useSelector((state) => state.provider.account); // Select account from Redux store
+
+  const handleConnectWallet = async () => {
+    await dispatch(loadAccount(dispatch));
+  };
   return (
     <Navbar expand="lg" bg="secondary" variant="dark">
       <Container>
@@ -42,7 +52,7 @@ const Navigation = ({ web3Handler, account }) => {
                 </Button>
               </Nav.Link>
             ) : (
-              <Button onClick={web3Handler} variant="outline-light">
+              <Button onClick={handleConnectWallet} variant="outline-light">
                 Connect Wallet
               </Button>
             )}

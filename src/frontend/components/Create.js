@@ -2,10 +2,21 @@ import axios from "axios";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { Row, Form, Button } from "react-bootstrap";
+import Alert from "./Alert";
+
+// Redux components
+import { useDispatch } from "react-redux";
+import { makeItem } from "./store/interactions";
+
+//API keys
 const privateApiKey = process.env.REACT_APP_PRIVATE_API_KEY || "";
 const privateSecretApiKey = process.env.REACT_APP_PRIVATE_API_SECRET_KEY || "";
 
 const Create = ({ marketplace, nft }) => {
+  const dispatch = useDispatch();
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("danger");
   const [image, setImage] = useState("");
   const [price, setPrice] = useState(null);
   const [name, setName] = useState("");
@@ -51,9 +62,14 @@ const Create = ({ marketplace, nft }) => {
       });
       const ipfsHash = await uploadToPinata(file);
       mintThenList(ipfsHash);
+      setAlertMessage("NFT creation successful");
+      setAlertVariant("success");
     } catch (error) {
       console.log("IPFS uri upload error", error);
+      setAlertMessage("NFT creation failed");
+      setAlertVariant("danger");
     }
+    setShowAlert(true);
   };
 
   const mintThenList = async (ipfsHash) => {
@@ -66,8 +82,12 @@ const Create = ({ marketplace, nft }) => {
     await (await nft.setApprovalForAll(marketplace.address, true)).wait();
     // add nft to marketplace
     const listingPrice = ethers.utils.parseEther(price.toString());
-    await (await marketplace.makeItem(nft.address, id, listingPrice)).wait();
+    // Get the provider
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // Dispatch the makeItem action
+    dispatch(makeItem(provider, nft, marketplace, id, listingPrice, dispatch));
   };
+
   return (
     <div className="container-fluid mt-5">
       <div className="row">
@@ -77,6 +97,14 @@ const Create = ({ marketplace, nft }) => {
           style={{ maxWidth: "1000px" }}
         >
           <div className="content mx-auto">
+            {showAlert && (
+              <Alert
+                message={alertMessage}
+                transactionHash={null} // or the actual transaction hash if available
+                variant={alertVariant}
+                setShowAlert={setShowAlert}
+              />
+            )}
             <Row className="g-4">
               <Form.Control
                 type="file"
@@ -117,5 +145,4 @@ const Create = ({ marketplace, nft }) => {
     </div>
   );
 };
-
 export default Create;
