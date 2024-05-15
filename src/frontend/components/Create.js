@@ -5,14 +5,16 @@ import { Row, Form, Button } from "react-bootstrap";
 import Alert from "./Alert";
 
 // Redux components
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { makeItem } from "./store/interactions";
 
 //API keys
 const privateApiKey = process.env.REACT_APP_PRIVATE_API_KEY || "";
 const privateSecretApiKey = process.env.REACT_APP_PRIVATE_API_SECRET_KEY || "";
 
-const Create = ({ marketplace, nft }) => {
+const Create = () => {
+  const nft = useSelector((state) => state.nft);
+  const marketplace = useSelector((state) => state.marketplace);
   const dispatch = useDispatch();
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -22,6 +24,7 @@ const Create = ({ marketplace, nft }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   console.log(nft);
+  console.log(Object.keys(nft));
 
   // console.log(privateApiKey, privateSecretApiKey);
 
@@ -83,7 +86,13 @@ const Create = ({ marketplace, nft }) => {
     }
     const uri = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
     // mint nft
-    await (await nft.mint(uri)).wait();
+    console.log(nft);
+    if (nft.contracts && nft.contracts.length > 0) {
+      const contract = nft.contracts[0]; // assuming the Contract object is the first element in the array
+      await (await contract.mint(uri)).wait(); // call the mint function on the Contract object
+    } else {
+      await (await nft.mint(uri)).wait();
+    }
     // get tokenId of new nft
     const id = await nft.tokenCount();
     // approve marketplace to spend nft
@@ -95,7 +104,8 @@ const Create = ({ marketplace, nft }) => {
     // Dispatch the makeItem action
     dispatch(makeItem(provider, nft, marketplace, id, listingPrice, dispatch));
   };
-
+  console.log(nft);
+  console.log(Object.keys(nft));
   return (
     <div className="container-fluid mt-5">
       <div className="row">

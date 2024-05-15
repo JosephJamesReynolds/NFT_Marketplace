@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { Row, Col, Card } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 function renderSoldItems(items) {
   return (
@@ -23,7 +24,10 @@ function renderSoldItems(items) {
   );
 }
 
-export default function MyListedItems({ marketplace, nft, account }) {
+export default function MyListedItems() {
+  const marketplace = useSelector((state) => state.marketplace);
+  const nft = useSelector((state) => state.nft);
+  const account = useSelector((state) => state.account);
   const [loading, setLoading] = useState(true);
   const [listedItems, setListedItems] = useState([]);
   const [soldItems, setSoldItems] = useState([]);
@@ -62,7 +66,7 @@ export default function MyListedItems({ marketplace, nft, account }) {
   };
   useEffect(() => {
     loadListedItems();
-  }, []);
+  }, [marketplace, nft, account]);
   if (loading)
     return (
       <main style={{ padding: "1rem 0" }}>

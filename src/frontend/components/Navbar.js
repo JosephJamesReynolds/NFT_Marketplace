@@ -11,7 +11,7 @@ const Navigation = () => {
   const account = useSelector((state) => state.provider.account); // Select account from Redux store
 
   const handleConnectWallet = async () => {
-    await dispatch(loadAccount(dispatch));
+    await loadAccount(dispatch);
   };
   return (
     <Navbar expand="lg" bg="secondary" variant="dark">
