@@ -27,9 +27,13 @@ function saveFrontendFiles(contract, name, chainId) {
     fs.mkdirSync(contractsDir);
   }
 
+  // Create an object where the key is the chainId and the value is the contract address
+  const data = {};
+  data[chainId] = contract.address;
+
   fs.writeFileSync(
     contractsDir + `/${name}-address.json`,
-    JSON.stringify({ chainId, address: contract.address }, undefined, 2)
+    JSON.stringify(data, undefined, 2)
   );
 
   const contractArtifact = artifacts.readArtifactSync(name);

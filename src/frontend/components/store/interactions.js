@@ -14,10 +14,10 @@ import {
   buyFailure,
 } from "./reducers/marketplace";
 
-import NFTAbi from "../../contractsData/NFT.json";
-import NFTaddress from "../../contractsData/NFT-address.json";
-import MarketplaceAbi from "../../contractsData/Marketplace.json";
-import MarketplaceAddress from "../../contractsData/Marketplace-address.json";
+import nftAbi from "../../contractsData/NFT.json";
+import nftAddress from "../../contractsData/NFT-address.json";
+import marketplaceAbi from "../../contractsData/Marketplace.json";
+import marketplaceAddress from "../../contractsData/Marketplace-address.json";
 
 export const loadProvider = (dispatch) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -48,22 +48,33 @@ export const loadAccount = async (dispatch) => {
 // LOAD CONTRACTS
 // - Load NFT Contract
 export const loadNFT = async (provider, chainId, dispatch) => {
-  console.log("NFTAbi:", NFTAbi); // log the NFTAbi
-  console.log(`NFTaddress[${chainId}]:`, NFTaddress[chainId]); // log the NFTaddress for the current chainId
+  try {
+    console.log("nftAbi:", nftAbi);
+    console.log("Type of nftAbi:", typeof nftAbi);
+    console.log("nftAbi.abi is array:", Array.isArray(nftAbi.abi));
+    console.log(`nftAddress[${chainId}]:`, nftAddress[chainId]);
 
-  const nft = new ethers.Contract(NFTaddress[chainId], NFTAbi, provider);
-  dispatch(setContracts(nft));
+    const nft = new ethers.Contract(nftAddress[chainId], nftAbi.abi, provider);
+    dispatch(setContracts(nft));
 
-  return nft;
+    return nft;
+  } catch (error) {
+    console.error("Error in loadNFT:", error);
+  }
 };
 
 export const loadMarketplace = async (provider, chainId, dispatch) => {
-  console.log("MarketplaceAbi:", MarketplaceAbi); // log the MarketplaceAbi
-  console.log(`MarketplaceAddress[${chainId}]:`, MarketplaceAddress[chainId]); // log the MarketplaceAddress for the current chainId
+  console.log("marketplaceAbi:", marketplaceAbi);
+  console.log("Type of marketplaceAbi:", typeof marketplaceAbi);
+  console.log(
+    "marketplaceAbi.abi is array:",
+    Array.isArray(marketplaceAbi.abi)
+  );
+  console.log(`marketplaceAddress[${chainId}]:`, marketplaceAddress[chainId]);
 
   const marketplace = new ethers.Contract(
-    MarketplaceAddress[chainId],
-    MarketplaceAbi,
+    marketplaceAddress[chainId],
+    marketplaceAbi.abi,
     provider
   );
   dispatch(setContract(marketplace));

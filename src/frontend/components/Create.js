@@ -21,8 +21,9 @@ const Create = ({ marketplace, nft }) => {
   const [price, setPrice] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  console.log(nft);
 
-  console.log(privateApiKey, privateSecretApiKey);
+  // console.log(privateApiKey, privateSecretApiKey);
 
   const uploadToPinata = async (file) => {
     const url = "https://api.pinata.cloud/pinning/pinFileToIPFS";
@@ -57,9 +58,12 @@ const Create = ({ marketplace, nft }) => {
   const createNFT = async () => {
     if (!image || !price || !name || !description) return;
     try {
-      const file = new Blob([JSON.stringify({ image, name, description })], {
-        type: "application/json",
-      });
+      const file = new Blob(
+        [JSON.stringify({ image, price, name, description })],
+        {
+          type: "application/json",
+        }
+      );
       const ipfsHash = await uploadToPinata(file);
       mintThenList(ipfsHash);
       setAlertMessage("NFT creation successful");
@@ -73,6 +77,10 @@ const Create = ({ marketplace, nft }) => {
   };
 
   const mintThenList = async (ipfsHash) => {
+    if (!nft) {
+      console.error("nft is undefined");
+      return;
+    }
     const uri = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
     // mint nft
     await (await nft.mint(uri)).wait();
