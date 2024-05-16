@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { Row, Col, Card, Button } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+import { buyItem } from "./store/interactions";
 
-const Home = ({ marketplace, nft }) => {
+const Home = () => {
+  const dispatch = useDispatch();
+  const account = useSelector((state) => state.provider.account);
+  const marketplace = useSelector((state) => state.marketplace.contract);
+  const nft = useSelector((state) => state.nft.contract);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
+
   const loadMarketplaceItems = async () => {
     // Load all unsold items
     const itemCount = await marketplace.itemCount();
@@ -35,15 +42,15 @@ const Home = ({ marketplace, nft }) => {
   };
 
   const buyMarketItem = async (item) => {
-    await (
-      await marketplace.purchaseItem(item.itemId, { value: item.totalPrice })
-    ).wait();
+    await dispatch(buyItem(marketplace, item.itemId, account));
     loadMarketplaceItems();
   };
 
   useEffect(() => {
-    loadMarketplaceItems();
-  }, []);
+    if (marketplace && nft) {
+      loadMarketplaceItems();
+    }
+  }, [marketplace, nft]);
   if (loading)
     return (
       <main style={{ padding: "1rem 0" }}>

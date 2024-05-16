@@ -84,6 +84,7 @@ export const loadMarketplace = async (provider, chainId, dispatch) => {
 
 //-----------------------------------
 // CREATE ITEM
+// Add minting function
 export const makeItem = async (
   provider,
   nft,
@@ -99,6 +100,7 @@ export const makeItem = async (
     let transaction;
 
     // Approve the marketplace to spend the user's NFT
+    //REfactor line 95 in this style
     transaction = await nft
       .connect(signer)
       .approve(marketplace.address, tokenId);
