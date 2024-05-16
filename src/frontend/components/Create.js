@@ -14,8 +14,8 @@ const privateSecretApiKey = process.env.REACT_APP_PRIVATE_API_SECRET_KEY || "";
 
 const Create = () => {
   const provider = useSelector((state) => state.provider.connection);
-  const nft = useSelector((state) => state.nft);
-  const marketplace = useSelector((state) => state.marketplace);
+  const nft = useSelector((state) => state.nft.contracts);
+  const marketplace = useSelector((state) => state.marketplace.contract);
   const dispatch = useDispatch();
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -92,21 +92,25 @@ const Create = () => {
     //Minting logic
     if (nft.contracts && nft.contracts.length > 0) {
       const contract = nft.contracts[0]; // assuming the Contract object is the first element in the array
-      await (await contract.connect(signer).mint(uri)).wait(); // call the mint function on the Contract object
+      await (await contract.mint(uri)).wait(); // call the mint function on the Contract object
     } else {
       await (await nft.mint(uri)).wait();
     }
-    //Minting Logic
+    //Minting
     // get tokenId of new nft
     const id = await nft.tokenCount();
     // approve marketplace to spend nft
-    await (await nft.setApprovalForAll(marketplace.address, true)).wait();
-    // add nft to marketplace
-    const listingPrice = ethers.utils.parseEther(price.toString());
-    // Get the provider
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // Dispatch the makeItem action
-    dispatch(makeItem(provider, nft, marketplace, id, listingPrice, dispatch));
+    if (marketplace) {
+      await (await nft.setApprovalForAll(marketplace.address, true)).wait();
+      // add nft to marketplace
+      const listingPrice = ethers.utils.parseEther(price.toString());
+      // Dispatch the makeItem action
+      dispatch(
+        makeItem(provider, nft, marketplace, id, listingPrice, dispatch)
+      );
+    } else {
+      console.error("marketplace is undefined");
+    }
   };
   console.log(nft);
   console.log(Object.keys(nft));
