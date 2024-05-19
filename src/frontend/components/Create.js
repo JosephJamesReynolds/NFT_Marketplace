@@ -16,6 +16,7 @@ const Create = () => {
   const provider = useSelector((state) => state.provider.connection);
   const nft = useSelector((state) => state.nft.contracts);
   const marketplace = useSelector((state) => state.marketplace.contract);
+  const account = useSelector((state) => state.provider.account);
   const dispatch = useDispatch();
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -24,41 +25,41 @@ const Create = () => {
   const [price, setPrice] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  console.log(nft);
-  console.log(Object.keys(nft));
-
-  // console.log(privateApiKey, privateSecretApiKey);
 
   const uploadToPinata = async (file) => {
-    const url = "https://api.pinata.cloud/pinning/pinFileToIPFS";
-    let data = new FormData();
-    data.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-    const response = await axios.post(url, data, {
-      maxContentLength: "Infinity",
-      headers: {
-        "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-        pinata_api_key: privateApiKey,
-        pinata_secret_api_key: privateSecretApiKey,
-      },
-    });
+    const res = await axios.post(
+      "https://api.pinata.cloud/pinning/pinFileToIPFS",
+      formData,
+      {
+        maxContentLength: "Infinity", // this is needed to prevent axios from erroring out with large files
+        headers: {
+          "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+          pinata_api_key: privateApiKey,
+          pinata_secret_api_key: privateSecretApiKey,
+        },
+      }
+    );
 
-    return response.data.IpfsHash;
+    if (res.status !== 200) {
+      throw new Error("Failed to upload file to Pinata");
+    }
+
+    return res.data.IpfsHash;
   };
 
   const uploadToIPFS = async (event) => {
-    event.preventDefault();
     const file = event.target.files[0];
-    if (typeof file !== "undefined") {
-      try {
-        const ipfsHash = await uploadToPinata(file);
-        console.log("IPFS hash", ipfsHash);
-        setImage(`https://gateway.pinata.cloud/ipfs/${ipfsHash}`);
-      } catch (error) {
-        console.log("Pinata upload error", error);
-      }
-    }
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const ipfsHash = await uploadToPinata(new Blob([reader.result]));
+      setImage(`https://ipfs.io/ipfs/${ipfsHash}`);
+    };
+    reader.readAsArrayBuffer(file);
   };
+
   const createNFT = async () => {
     if (!image || !price || !name || !description) return;
     try {
@@ -69,7 +70,16 @@ const Create = () => {
         }
       );
       const ipfsHash = await uploadToPinata(file);
-      mintThenList(ipfsHash);
+      const listingPrice = ethers.utils.parseEther(price.toString());
+      await makeItem(
+        provider,
+        nft,
+        marketplace,
+        ipfsHash,
+        listingPrice,
+        dispatch
+      );
+
       setAlertMessage("NFT creation successful");
       setAlertVariant("success");
     } catch (error) {
@@ -80,40 +90,6 @@ const Create = () => {
     setShowAlert(true);
   };
 
-  const mintThenList = async (ipfsHash) => {
-    console.log("ipfsHash", ipfsHash);
-    if (!nft) {
-      console.error("nft is undefined");
-      return;
-    }
-    const uri = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-    // mint nft QmSXd7T6MUgieswYvDLCizucBSiW13jRMuER2yDrhwKQeh
-    console.log(nft);
-    //Minting logic
-    if (nft.contracts && nft.contracts.length > 0) {
-      const contract = nft.contracts[0]; // assuming the Contract object is the first element in the array
-      await (await contract.mint(uri)).wait(); // call the mint function on the Contract object
-    } else {
-      await (await nft.mint(uri)).wait();
-    }
-    //Minting
-    // get tokenId of new nft
-    const id = await nft.tokenCount();
-    // approve marketplace to spend nft
-    if (marketplace) {
-      await (await nft.setApprovalForAll(marketplace.address, true)).wait();
-      // add nft to marketplace
-      const listingPrice = ethers.utils.parseEther(price.toString());
-      // Dispatch the makeItem action
-      dispatch(
-        makeItem(provider, nft, marketplace, id, listingPrice, dispatch)
-      );
-    } else {
-      console.error("marketplace is undefined");
-    }
-  };
-  console.log(nft);
-  console.log(Object.keys(nft));
   return (
     <div className="container-fluid mt-5">
       <div className="row">

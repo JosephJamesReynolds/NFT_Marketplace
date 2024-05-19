@@ -60,17 +60,57 @@ export const makeItem = async (
   price,
   dispatch
 ) => {
-  dispatch(startCreating());
-  const signer = await provider.getSigner();
-  const transaction = await nft
-    .connect(signer)
-    .approve(marketplace.address, tokenId);
-  await transaction.wait();
-  const createTransaction = await marketplace
-    .connect(signer)
-    .makeItem(nft.address, tokenId, price);
-  const receipt = await createTransaction.wait();
-  dispatch(createSuccess(receipt.transactionHash));
+  try {
+    dispatch(startCreating());
+    const signer = await provider.getSigner();
+
+    let transaction;
+
+    // Minting logic
+    const uri = `https://gateway.pinata.cloud/ipfs/${tokenId}`;
+    if (nft.contracts && nft.contracts.length > 0) {
+      const contract = nft.contracts[0]; // assuming the Contract object is the first element in the array
+      transaction = await contract.connect(signer).mint(uri);
+      await transaction.wait();
+    } else {
+      transaction = await nft.connect(signer).mint(uri);
+      await transaction.wait();
+    }
+
+    // get tokenId of new nft
+    const id = await nft.tokenCount();
+
+    // approve marketplace to spend nft
+    if (marketplace) {
+      transaction = await nft
+        .connect(signer)
+        .setApprovalForAll(marketplace.address, true);
+      await transaction.wait();
+    } else {
+      console.error("marketplace is undefined");
+      return;
+    }
+
+    const connectedContract = nft.connect(signer);
+
+    // Check that the signer is correctly connected
+    const signerAddress = await signer.getAddress();
+    if (connectedContract.signer.getAddress() !== signerAddress) {
+      throw new Error("Signer is not correctly connected to the contract");
+    }
+
+    transaction = await connectedContract.approve(marketplace.address, id);
+    await transaction.wait();
+    const listingPrice = ethers.utils.parseEther(price.toString());
+    transaction = await marketplace
+      .connect(signer)
+      .makeItem(nft.address, id, listingPrice);
+    const receipt = await transaction.wait();
+    dispatch(createSuccess(receipt.transactionHash));
+  } catch (error) {
+    console.error(error);
+    dispatch(createFailure());
+  }
 };
 
 export const buyItem = async (provider, marketplace, itemId, dispatch) => {
