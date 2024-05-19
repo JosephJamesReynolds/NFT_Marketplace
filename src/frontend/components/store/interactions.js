@@ -52,7 +52,7 @@ export const loadMarketplace = async (provider, chainId, dispatch) => {
   return marketplace;
 };
 
-export const mintNft = async (
+export const makeItem = async (
   provider,
   nft,
   marketplace,
@@ -96,7 +96,7 @@ export const mintNft = async (
     const listingPrice = ethers.utils.parseEther(price.toString());
     transaction = await marketplace
       .connect(signer)
-      .mintNft(nft.address, id, listingPrice);
+      .makeItem(nft.address, id, listingPrice);
     const receipt = await transaction.wait();
     dispatch(createSuccess(receipt.transactionHash));
   } catch (error) {

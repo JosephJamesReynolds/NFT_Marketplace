@@ -29,7 +29,7 @@ const Home = () => {
         const totalPrice = await marketplace.getTotalPrice(item.itemId);
         // Add item to items array
         items.push({
-          totalPrice,
+          totalPrice: totalPrice,
           itemId: item.itemId,
           seller: item.seller,
           name: metadata.name,
