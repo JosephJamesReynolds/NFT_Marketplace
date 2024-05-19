@@ -6,9 +6,10 @@ import { buyItem } from "./store/interactions";
 
 const Home = () => {
   const dispatch = useDispatch();
+  const provider = useSelector((state) => state.provider.connection);
   const account = useSelector((state) => state.provider.account);
   const marketplace = useSelector((state) => state.marketplace.contract);
-  const nft = useSelector((state) => state.nft.contract);
+  const nft = useSelector((state) => state.nft.contracts);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
 
@@ -42,7 +43,7 @@ const Home = () => {
   };
 
   const buyMarketItem = async (item) => {
-    await dispatch(buyItem(marketplace, item.itemId, account));
+    await buyItem(provider, marketplace, item.itemId, account, dispatch);
     loadMarketplaceItems();
   };
 

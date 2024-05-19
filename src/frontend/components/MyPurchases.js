@@ -10,7 +10,7 @@ export default function MyPurchases() {
   // Access state from Redux store
 
   const marketplace = useSelector((state) => state.marketplace.contract);
-  const nft = useSelector((state) => state.nft.contract);
+  const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
 
   useEffect(() => {

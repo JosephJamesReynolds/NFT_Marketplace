@@ -25,8 +25,8 @@ function renderSoldItems(items) {
 }
 
 export default function MyListedItems() {
-  const marketplace = useSelector((state) => state.marketplace);
-  const nft = useSelector((state) => state.nft);
+  const marketplace = useSelector((state) => state.marketplace.contract);
+  const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
   const [loading, setLoading] = useState(true);
   const [listedItems, setListedItems] = useState([]);

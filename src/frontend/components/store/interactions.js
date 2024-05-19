@@ -105,13 +105,30 @@ export const mintNft = async (
   }
 };
 
-export const buyItem = async (provider, marketplace, itemId, dispatch) => {
-  dispatch(startBuying());
-  const signer = await provider.getSigner();
-  const totalPrice = await marketplace.getTotalPrice(itemId);
-  const transaction = await marketplace
-    .connect(signer)
-    .purchaseItem(itemId, { value: totalPrice });
-  const receipt = await transaction.wait();
-  dispatch(buySuccess(receipt.transactionHash));
+export const buyItem = async (
+  provider,
+  marketplace,
+  itemId,
+  account,
+  dispatch
+) => {
+  try {
+    dispatch(startBuying());
+    const signer = await provider.getSigner();
+    console.log(`Buyer's account address: ${account}`);
+    let transaction;
+
+    const totalPrice = await marketplace.getTotalPrice(itemId);
+
+    transaction = await marketplace
+      .connect(signer)
+      .purchaseItem(itemId, { value: totalPrice });
+    await transaction.wait();
+
+    const receipt = await transaction.wait();
+    dispatch(buySuccess(receipt.transactionHash));
+  } catch (error) {
+    console.error(error);
+    dispatch(buyFailure());
+  }
 };
