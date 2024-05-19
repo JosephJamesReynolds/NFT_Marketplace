@@ -52,7 +52,7 @@ export const loadMarketplace = async (provider, chainId, dispatch) => {
   return marketplace;
 };
 
-export const makeItem = async (
+export const mintNft = async (
   provider,
   nft,
   marketplace,
@@ -91,20 +91,12 @@ export const makeItem = async (
       return;
     }
 
-    const connectedContract = nft.connect(signer);
-
-    // Check that the signer is correctly connected
-    const signerAddress = await signer.getAddress();
-    if (connectedContract.signer.getAddress() !== signerAddress) {
-      throw new Error("Signer is not correctly connected to the contract");
-    }
-
-    transaction = await connectedContract.approve(marketplace.address, id);
+    transaction = await nft.connect(signer).approve(marketplace.address, id);
     await transaction.wait();
     const listingPrice = ethers.utils.parseEther(price.toString());
     transaction = await marketplace
       .connect(signer)
-      .makeItem(nft.address, id, listingPrice);
+      .mintNft(nft.address, id, listingPrice);
     const receipt = await transaction.wait();
     dispatch(createSuccess(receipt.transactionHash));
   } catch (error) {

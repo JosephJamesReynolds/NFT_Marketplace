@@ -6,7 +6,7 @@ import Alert from "./Alert";
 
 // Redux components
 import { useSelector, useDispatch } from "react-redux";
-import { makeItem } from "./store/interactions";
+import { mintNft } from "./store/interactions";
 
 //API keys
 const privateApiKey = process.env.REACT_APP_PRIVATE_API_KEY || "";
@@ -71,7 +71,7 @@ const Create = () => {
       );
       const ipfsHash = await uploadToPinata(file);
       const listingPrice = ethers.utils.parseEther(price.toString());
-      await makeItem(
+      await mintNft(
         provider,
         nft,
         marketplace,
