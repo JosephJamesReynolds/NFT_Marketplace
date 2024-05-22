@@ -70,7 +70,6 @@ const Create = () => {
         }
       );
       const ipfsHash = await uploadToPinata(file);
-      const listingPrice = ethers.utils.parseEther(price.toString());
       await makeItem(provider, nft, marketplace, ipfsHash, price, dispatch);
 
       setAlertMessage("NFT creation successful");

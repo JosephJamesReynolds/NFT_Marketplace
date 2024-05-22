@@ -8,13 +8,31 @@ export default function MyPurchases() {
   const [purchases, setPurchases] = useState([]);
 
   // Access state from Redux store
-
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
 
+  // Add loading states for marketplace, nft, and account
+  const [marketplaceLoaded, setMarketplaceLoaded] = useState(false);
+  const [nftLoaded, setNftLoaded] = useState(false);
+  const [accountLoaded, setAccountLoaded] = useState(false);
+
   useEffect(() => {
+    if (marketplace) setMarketplaceLoaded(true);
+    if (nft) setNftLoaded(true);
+    if (account) setAccountLoaded(true);
+  }, [marketplace, nft, account]);
+
+  useEffect(() => {
+    // Only run if marketplace, nft, and account are loaded
+    if (!marketplaceLoaded || !nftLoaded || !accountLoaded) {
+      return;
+    }
     const loadPurchasedItems = async () => {
+      if (!marketplace) {
+        console.log("Marketplace contract is not loaded");
+        return;
+      }
       // Fetch purchased items from marketplace by quering Offered events with the buyer set as the user
       const filter = marketplace.filters.Bought(
         null,
@@ -54,7 +72,7 @@ export default function MyPurchases() {
     };
 
     loadPurchasedItems();
-  }, [marketplace, nft, account]);
+  }, [marketplaceLoaded, nftLoaded, accountLoaded]); // Depend on loading states instead
 
   if (loading)
     return (
