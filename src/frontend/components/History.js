@@ -1,34 +1,29 @@
-import { useState, useEffect } from "react";
+import React, { useEffect } from "react"; // Add this line
+import { useSelector, useDispatch } from "react-redux";
 import Table from "react-bootstrap/Table";
 import { ethers } from "ethers";
 
-const History = ({ marketplace, nft, account }) => {
-  const [transactions, setTransactions] = useState([]);
+import {
+  loadAllItemsCreated,
+  loadAllItemsPurchased,
+} from "./store/interactions";
+
+const History = () => {
+  const dispatch = useDispatch();
+
+  const provider = useSelector((state) => state.provider.connection);
+  const marketplace = useSelector((state) => state.marketplace.contract);
+  const nft = useSelector((state) => state.nft.contracts);
+  const account = useSelector((state) => state.provider.account);
+
+  const transactions = useSelector((state) => state.transactions);
 
   useEffect(() => {
-    if (marketplace) {
-      fetchTransactions();
+    if (provider && marketplace) {
+      loadAllItemsCreated(provider, marketplace, dispatch);
+      loadAllItemsPurchased(provider, marketplace, dispatch);
     }
-  }, [marketplace]);
-
-  const fetchTransactions = async () => {
-    marketplace.on(
-      "Bought",
-      (itemId, nftAddress, tokenId, price, seller, buyer, event) => {
-        const transaction = {
-          itemId: itemId.toString(),
-          nftAddress,
-          tokenId: tokenId.toString(),
-          price: ethers.utils.formatUnits(price.toString(), "ether"),
-          seller,
-          buyer,
-          hash: event.transactionHash,
-          timestamp: new Date().getTime(), // Current time
-        };
-        setTransactions((transactions) => [...transactions, transaction]);
-      }
-    );
-  };
+  }, [provider, marketplace, dispatch]);
 
   return (
     <Table striped bordered hover>
@@ -43,41 +38,46 @@ const History = ({ marketplace, nft, account }) => {
         </tr>
       </thead>
       <tbody>
-        {transactions.map((transaction, index) => (
-          <tr key={index}>
-            <td>
-              {transaction.hash.slice(0, 5) +
-                "..." +
-                transaction.hash.slice(61, 66)}
-            </td>
-            <td>{transaction.nft.Id.toString()}</td>
-            <td>
-              {ethers.utils.formatUnits(transaction.price.toString(), "ether")}
-            </td>
-            <td>
-              {transaction.buyer.slice(0, 5) +
-                "..." +
-                transaction.buyer.slice(38, 42)}
-            </td>
-            <td>
-              {transaction.seller.slice(0, 5) +
-                "..." +
-                transaction.seller.slice(38, 42)}
-            </td>
-            <td>
-              {new Date(
-                Number(transaction.timestamp.toString() + "000")
-              ).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-              })}
-            </td>
-          </tr>
-        ))}
+        {transactions &&
+          transactions.length > 0 &&
+          transactions.map((transaction, index) => (
+            <tr key={index}>
+              <td>
+                {transaction.hash.slice(0, 5) +
+                  "..." +
+                  transaction.hash.slice(61, 66)}
+              </td>
+              <td>{transaction.nft.Id.toString()}</td>
+              <td>
+                {ethers.utils.formatUnits(
+                  transaction.price.toString(),
+                  "ether"
+                )}
+              </td>
+              <td>
+                {transaction.buyer.slice(0, 5) +
+                  "..." +
+                  transaction.buyer.slice(38, 42)}
+              </td>
+              <td>
+                {transaction.seller.slice(0, 5) +
+                  "..." +
+                  transaction.seller.slice(38, 42)}
+              </td>
+              <td>
+                {new Date(
+                  Number(transaction.timestamp.toString() + "000")
+                ).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  second: "numeric",
+                })}
+              </td>
+            </tr>
+          ))}
       </tbody>
     </Table>
   );

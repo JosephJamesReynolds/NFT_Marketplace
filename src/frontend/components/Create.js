@@ -13,14 +13,24 @@ const privateApiKey = process.env.REACT_APP_PRIVATE_API_KEY || "";
 const privateSecretApiKey = process.env.REACT_APP_PRIVATE_API_SECRET_KEY || "";
 
 const Create = () => {
+  // Redux state
   const provider = useSelector((state) => state.provider.connection);
   const nft = useSelector((state) => state.nft.contracts);
   const marketplace = useSelector((state) => state.marketplace.contract);
   const account = useSelector((state) => state.provider.account);
+  const isCreating = useSelector(
+    (state) => state.marketplace.creating.isCreating
+  );
+  const isSuccess = useSelector(
+    (state) => state.marketplace.creating.isSuccess
+  );
+  const transactionHash = useSelector(
+    (state) => state.marketplace.creating.transactionHash
+  );
   const dispatch = useDispatch();
+
+  // React state
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertVariant, setAlertVariant] = useState("danger");
   const [image, setImage] = useState("");
   const [price, setPrice] = useState(null);
   const [name, setName] = useState("");
@@ -62,23 +72,18 @@ const Create = () => {
 
   const createNFT = async () => {
     if (!image || !price || !name || !description) return;
-    try {
-      const file = new Blob(
-        [JSON.stringify({ image, price, name, description })],
-        {
-          type: "application/json",
-        }
-      );
-      const ipfsHash = await uploadToPinata(file);
-      await makeItem(provider, nft, marketplace, ipfsHash, price, dispatch);
 
-      setAlertMessage("NFT creation successful");
-      setAlertVariant("success");
-    } catch (error) {
-      console.log("IPFS uri upload error", error);
-      setAlertMessage("NFT creation failed");
-      setAlertVariant("danger");
-    }
+    setShowAlert(false); // Hide any previous alerts
+
+    const file = new Blob(
+      [JSON.stringify({ image, price, name, description })],
+      {
+        type: "application/json",
+      }
+    );
+    const ipfsHash = await uploadToPinata(file);
+    await makeItem(provider, nft, marketplace, ipfsHash, price, dispatch);
+
     setShowAlert(true);
   };
 
@@ -91,13 +96,29 @@ const Create = () => {
           style={{ maxWidth: "1000px" }}
         >
           <div className="content mx-auto">
-            {showAlert && (
+            {isCreating ? (
               <Alert
-                message={alertMessage}
-                transactionHash={null} // or the actual transaction hash if available
-                variant={alertVariant}
+                message={"Creation Pending..."}
+                transactionHash={null}
+                variant={"info"}
                 setShowAlert={setShowAlert}
               />
+            ) : isSuccess && showAlert ? (
+              <Alert
+                message={"Creation Successful"}
+                transactionHash={transactionHash}
+                variant={"success"}
+                setShowAlert={setShowAlert}
+              />
+            ) : !isSuccess && showAlert ? (
+              <Alert
+                message={"Creation Failed"}
+                transactionHash={null}
+                variant={"danger"}
+                setShowAlert={setShowAlert}
+              />
+            ) : (
+              <></>
             )}
             <Row className="g-4">
               <Form.Control
@@ -139,4 +160,5 @@ const Create = () => {
     </div>
   );
 };
+
 export default Create;

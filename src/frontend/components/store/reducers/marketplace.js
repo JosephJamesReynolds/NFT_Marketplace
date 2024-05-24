@@ -22,6 +22,12 @@ export const marketplace = createSlice({
     setContract: (state, action) => {
       state.contract = action.payload;
     },
+    itemsCreatedLoaded: (state, action) => {
+      state.itemsCreated = action.payload;
+    },
+    itemsPurchasedLoaded: (state, action) => {
+      state.itemsPurchased = action.payload;
+    },
     startCreating: (state) => {
       state.creating.isCreating = true;
       state.creating.isSuccess = false;
@@ -63,6 +69,8 @@ export const {
   startBuying,
   buySuccess,
   buyFailure,
+  itemsCreatedLoaded,
+  itemsPurchasedLoaded,
 } = marketplace.actions;
 
 export default marketplace.reducer;

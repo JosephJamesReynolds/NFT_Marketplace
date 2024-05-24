@@ -3,6 +3,8 @@ import { setProvider, setNetwork, setAccount } from "./reducers/provider";
 import { setContracts } from "./reducers/nft";
 import {
   setContract,
+  itemsCreatedLoaded,
+  itemsPurchasedLoaded,
   startCreating,
   createSuccess,
   createFailure,
@@ -99,12 +101,16 @@ export const makeItem = async (
       .makeItem(nft.address, id, listingPrice);
     const receipt = await transaction.wait();
     dispatch(createSuccess(receipt.transactionHash));
+
+    return receipt;
   } catch (error) {
     console.error(error);
+    if (error.message === "User denied transaction signature.") {
+      throw error; // re-throw the error if the user rejected the transaction
+    }
     dispatch(createFailure());
   }
 };
-
 export const buyItem = async (
   provider,
   marketplace,
@@ -131,4 +137,37 @@ export const buyItem = async (
     console.error(error);
     dispatch(buyFailure());
   }
+};
+export const loadAllItemsCreated = async (provider, marketplace, dispatch) => {
+  // Fetch ItemCreated events from the Blockchain
+  const block = await provider.getBlockNumber();
+
+  const itemCreatedStream = await marketplace.queryFilter("Offered", 0, block);
+  const itemsCreated = itemCreatedStream.map((event) => {
+    return {
+      hash: event.transactionHash,
+      args: event.args,
+    };
+  });
+
+  dispatch(itemsCreatedLoaded(itemsCreated));
+};
+
+export const loadAllItemsPurchased = async (
+  provider,
+  marketplace,
+  dispatch
+) => {
+  // Fetch ItemPurchased events from the Blockchain
+  const block = await provider.getBlockNumber();
+
+  const itemPurchasedStream = await marketplace.queryFilter("Bought", 0, block);
+  const itemsPurchased = itemPurchasedStream.map((event) => {
+    return {
+      hash: event.transactionHash,
+      args: event.args,
+    };
+  });
+
+  dispatch(itemsPurchasedLoaded(itemsPurchased));
 };
