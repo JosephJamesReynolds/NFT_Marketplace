@@ -3,31 +3,35 @@ import { ethers } from "ethers";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { buyItem } from "./store/interactions";
+import Alert from "./Alert";
 
 const Home = () => {
-  const dispatch = useDispatch();
+  // Redux state
   const provider = useSelector((state) => state.provider.connection);
   const account = useSelector((state) => state.provider.account);
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
+  const isBuying = useSelector((state) => state.marketplace.buying.isBuying);
+  const isSuccess = useSelector((state) => state.marketplace.buying.isSuccess);
+  const transactionHash = useSelector(
+    (state) => state.marketplace.buying.transactionHash
+  );
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
 
   const loadMarketplaceItems = async () => {
-    // Load all unsold items
     const itemCount = await marketplace.itemCount();
     let items = [];
     for (let i = 1; i <= itemCount; i++) {
       const item = await marketplace.items(i);
       if (!item.sold) {
-        // get uri url from nft contract
         const uri = await nft.tokenURI(item.tokenId);
-        // use uri to fetch the nft metadata stored on ipfs
         const response = await fetch(uri);
         const metadata = await response.json();
-        // get total price of item (item price + fee)
         const totalPrice = await marketplace.getTotalPrice(item.itemId);
-        // Add item to items array
         items.push({
           totalPrice: totalPrice,
           itemId: item.itemId,
@@ -43,8 +47,10 @@ const Home = () => {
   };
 
   const buyMarketItem = async (item) => {
+    setShowAlert(false);
     await buyItem(provider, marketplace, item.itemId, account, dispatch);
     loadMarketplaceItems();
+    setShowAlert(true);
   };
 
   useEffect(() => {
@@ -52,14 +58,40 @@ const Home = () => {
       loadMarketplaceItems();
     }
   }, [marketplace, nft]);
+
   if (loading)
     return (
       <main style={{ padding: "1rem 0" }}>
         <h2>Loading...</h2>
       </main>
     );
+
   return (
     <div className="flex justify-center">
+      {isBuying ? (
+        <Alert
+          message={"Purchase Pending..."}
+          transactionHash={null}
+          variant={"info"}
+          setShowAlert={setShowAlert}
+        />
+      ) : isSuccess && showAlert ? (
+        <Alert
+          message={"Purchase Successful"}
+          transactionHash={transactionHash}
+          variant={"success"}
+          setShowAlert={setShowAlert}
+        />
+      ) : !isSuccess && showAlert ? (
+        <Alert
+          message={"Purchase Failed"}
+          transactionHash={null}
+          variant={"danger"}
+          setShowAlert={setShowAlert}
+        />
+      ) : (
+        <></>
+      )}
       {items.length > 0 ? (
         <div className="px-5 container">
           <Row xs={1} md={2} lg={4} className="g-4 py-5">
@@ -95,4 +127,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
