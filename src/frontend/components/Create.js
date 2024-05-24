@@ -71,6 +71,11 @@ const Create = () => {
   };
 
   const createNFT = async () => {
+    if (!provider || !account) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+
     if (!image || !price || !name || !description) return;
 
     setShowAlert(false); // Hide any previous alerts

@@ -46,13 +46,6 @@ const Home = () => {
     setItems(items);
   };
 
-  const buyMarketItem = async (item) => {
-    setShowAlert(false);
-    await buyItem(provider, marketplace, item.itemId, account, dispatch);
-    loadMarketplaceItems();
-    setShowAlert(true);
-  };
-
   useEffect(() => {
     if (marketplace && nft) {
       loadMarketplaceItems();
@@ -106,7 +99,18 @@ const Home = () => {
                   <Card.Footer>
                     <div className="d-grid">
                       <Button
-                        onClick={() => buyMarketItem(item)}
+                        onClick={async () => {
+                          setShowAlert(false);
+                          await buyItem(
+                            provider,
+                            marketplace,
+                            item.itemId,
+                            account,
+                            dispatch
+                          );
+                          await loadMarketplaceItems();
+                          setShowAlert(true);
+                        }}
                         variant="primary"
                         size="lg"
                       >

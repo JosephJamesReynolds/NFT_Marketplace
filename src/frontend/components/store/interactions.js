@@ -3,7 +3,6 @@ import { setProvider, setNetwork, setAccount } from "./reducers/provider";
 import { setContracts } from "./reducers/nft";
 import {
   setContract,
-  itemsCreatedLoaded,
   itemsPurchasedLoaded,
   startCreating,
   createSuccess,
@@ -138,20 +137,6 @@ export const buyItem = async (
     dispatch(buyFailure());
   }
 };
-export const loadAllItemsCreated = async (provider, marketplace, dispatch) => {
-  // Fetch ItemCreated events from the Blockchain
-  const block = await provider.getBlockNumber();
-
-  const itemCreatedStream = await marketplace.queryFilter("Offered", 0, block);
-  const itemsCreated = itemCreatedStream.map((event) => {
-    return {
-      hash: event.transactionHash,
-      args: event.args,
-    };
-  });
-
-  dispatch(itemsCreatedLoaded(itemsCreated));
-};
 
 export const loadAllItemsPurchased = async (
   provider,
@@ -162,12 +147,18 @@ export const loadAllItemsPurchased = async (
   const block = await provider.getBlockNumber();
 
   const itemPurchasedStream = await marketplace.queryFilter("Bought", 0, block);
-  const itemsPurchased = itemPurchasedStream.map((event) => {
+  const items = itemPurchasedStream.map((event) => {
     return {
       hash: event.transactionHash,
-      args: event.args,
+      itemId: event.args.itemId,
+      nft: event.args.nft,
+      tokenId: event.args.tokenId,
+      price: event.args.price,
+      seller: event.args.seller,
+      buyer: event.args.buyer,
     };
   });
+  console.log(items);
 
-  dispatch(itemsPurchasedLoaded(itemsPurchased));
+  dispatch(itemsPurchasedLoaded(items));
 };
