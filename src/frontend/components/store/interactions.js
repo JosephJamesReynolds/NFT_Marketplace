@@ -158,7 +158,6 @@ export const loadAllItemsPurchased = async (
       buyer: event.args.buyer,
     };
   });
-  console.log(items);
 
   dispatch(itemsPurchasedLoaded(items));
 };

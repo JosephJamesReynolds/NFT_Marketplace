@@ -18,8 +18,6 @@ const History = () => {
     }
   }, [provider, marketplace]);
 
-  console.log(transactions); // Check the content of the transactions array
-
   return (
     <div>
       {provider && marketplace ? (
@@ -36,14 +34,13 @@ const History = () => {
           <tbody>
             {transactions &&
               transactions.map((transaction, index) => {
-                console.log(transaction);
                 if (
                   !transaction.itemId ||
                   !transaction.price ||
                   !transaction.buyer ||
                   !transaction.seller
                 ) {
-                  return null; // or some placeholder component
+                  return null;
                 }
 
                 return (
