@@ -2,8 +2,8 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { ethers } from "ethers";
-import { Spinner } from "react-bootstrap";
+// import { ethers } from "ethers";
+// import { Spinner } from "react-bootstrap";
 
 //Components
 import Navigation from "./Navbar";

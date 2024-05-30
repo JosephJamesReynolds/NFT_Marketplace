@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Navbar, Nav, Button, Container } from "react-bootstrap";
-import market from "./market.png";
+import symbol from "./symbol.png";
 
 //Redux components
 import { loadAccount } from "./store/interactions";
@@ -13,53 +12,71 @@ const Navigation = () => {
   const handleConnectWallet = async () => {
     await loadAccount(dispatch);
   };
+
   return (
-    <Navbar expand="lg" bg="secondary" variant="dark">
-      <Container>
-        <Navbar.Brand>
-          <img src={market} width="40" height="40" className="" alt="" />
-          &nbsp; Joseph's NFT Marketplace
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">
-              Home
-            </Nav.Link>
-            <Nav.Link as={Link} to="/create">
-              Create
-            </Nav.Link>
-            <Nav.Link as={Link} to="/my-listed-items">
-              My Listed Items
-            </Nav.Link>
-            <Nav.Link as={Link} to="/my-purchases">
-              My Purchases
-            </Nav.Link>
-            <Nav.Link as={Link} to="/my-history">
-              My History
-            </Nav.Link>
-          </Nav>
-          <Nav>
+    <nav className="bg-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <img src={symbol} alt="Logo" className="h-14 w-14" />
+            <div className="ml-10 text-white text-xl">
+              Joseph's NFT Marketplace
+            </div>
+            <div className="ml-10 flex items-baseline space-x-4">
+              <Link
+                to="/"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium"
+              >
+                Home
+              </Link>
+              <Link
+                to="/create"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium"
+              >
+                Create
+              </Link>
+              <Link
+                to="/my-listed-items"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium"
+              >
+                My Listed Items
+              </Link>
+              <Link
+                to="/my-purchases"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium"
+              >
+                My Purchases
+              </Link>
+              <Link
+                to="/my-history"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium"
+              >
+                My History
+              </Link>
+            </div>
+          </div>
+          <div className="ml-4 flex items-center md:ml-6">
             {account ? (
-              <Nav.Link
+              <a
                 href={`https://etherscan.io/address/${account}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="button nav-button btn-sm mx-4"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium"
               >
-                <Button variant="outline-light">
-                  {account.slice(0, 5) + "..." + account.slice(38, 42)}
-                </Button>
-              </Nav.Link>
+                {account.slice(0, 5) + "..." + account.slice(38, 42)}
+              </a>
             ) : (
-              <Button onClick={handleConnectWallet} variant="outline-light">
+              <button
+                onClick={handleConnectWallet}
+                className="text-gray-100 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-md font-medium border border-gray-300 hover:border-transparent"
+              >
                 Connect Wallet
-              </Button>
+              </button>
             )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 };
 

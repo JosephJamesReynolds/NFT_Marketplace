@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { ethers } from "ethers";
-import { Row, Col, Card } from "react-bootstrap";
 
 export default function MyPurchases() {
   const [loading, setLoading] = useState(true);
@@ -76,7 +75,7 @@ export default function MyPurchases() {
 
   if (loading)
     return (
-      <main style={{ padding: "1rem 0" }}>
+      <main className="py-4">
         <h2>Loading...</h2>
       </main>
     );
@@ -84,21 +83,27 @@ export default function MyPurchases() {
     <div className="flex justify-center">
       {purchases.length > 0 ? (
         <div className="px-5 container">
-          <Row xs={1} md={2} lg={4} className="g-4 py-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-5">
             {purchases.map((item, idx) => (
-              <Col key={idx} className="overflow-hidden">
-                <Card>
-                  <Card.Img variant="top" src={item.image} />
-                  <Card.Footer>
-                    {ethers.utils.formatEther(item.totalPrice)} ETH
-                  </Card.Footer>
-                </Card>
-              </Col>
+              <div key={idx} className="overflow-hidden">
+                <div className="max-w-sm rounded overflow-hidden shadow-lg">
+                  <img
+                    className="w-full"
+                    src={item.image}
+                    alt="Sunset in the mountains"
+                  />
+                  <div className="px-6 py-4">
+                    <div className="font-bold text-xl mb-2">
+                      {ethers.utils.formatEther(item.totalPrice)} ETH
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
-          </Row>
+          </div>
         </div>
       ) : (
-        <main style={{ padding: "1rem 0" }}>
+        <main className="py-4">
           <h2>No purchases</h2>
         </main>
       )}

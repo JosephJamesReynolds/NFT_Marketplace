@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { Row, Col, Card, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { buyItem } from "./store/interactions";
 import Alert from "./Alert";
@@ -54,7 +53,7 @@ const Home = () => {
 
   if (loading)
     return (
-      <main style={{ padding: "1rem 0" }}>
+      <main className="p-4">
         <h2>Loading...</h2>
       </main>
     );
@@ -87,44 +86,39 @@ const Home = () => {
       )}
       {items.length > 0 ? (
         <div className="px-5 container">
-          <Row xs={1} md={2} lg={4} className="g-4 py-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-5">
             {items.map((item, idx) => (
-              <Col key={idx} className="overflow-hidden">
-                <Card>
-                  <Card.Img variant="top" src={item.image} />
-                  <Card.Body color="secondary">
-                    <Card.Title>{item.name}</Card.Title>
-                    <Card.Text>{item.description}</Card.Text>
-                  </Card.Body>
-                  <Card.Footer>
-                    <div className="d-grid">
-                      <Button
-                        onClick={async () => {
-                          setShowAlert(false);
-                          await buyItem(
-                            provider,
-                            marketplace,
-                            item.itemId,
-                            account,
-                            dispatch
-                          );
-                          await loadMarketplaceItems();
-                          setShowAlert(true);
-                        }}
-                        variant="primary"
-                        size="lg"
-                      >
-                        Buy for {ethers.utils.formatEther(item.totalPrice)} ETH
-                      </Button>
-                    </div>
-                  </Card.Footer>
-                </Card>
-              </Col>
+              <div key={idx} className="overflow-hidden rounded shadow-lg">
+                <img className="w-full" src={item.image} alt={item.name} />
+                <div className="px-6 py-4">
+                  <div className="font-bold text-xl mb-2">{item.name}</div>
+                  <p className="text-gray-700 text-base">{item.description}</p>
+                </div>
+                <div className="px-6 pt-4 pb-2">
+                  <button
+                    onClick={async () => {
+                      setShowAlert(false);
+                      await buyItem(
+                        provider,
+                        marketplace,
+                        item.itemId,
+                        account,
+                        dispatch
+                      );
+                      await loadMarketplaceItems();
+                      setShowAlert(true);
+                    }}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Buy for {ethers.utils.formatEther(item.totalPrice)} ETH
+                  </button>
+                </div>
+              </div>
             ))}
-          </Row>
+          </div>
         </div>
       ) : (
-        <main style={{ padding: "1rem 0" }}>
+        <main className="p-4">
           <h2>No listed assets</h2>
         </main>
       )}

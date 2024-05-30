@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 import { ethers } from "ethers";
-import { Row, Form, Button } from "react-bootstrap";
 import Alert from "./Alert";
 
 // Redux components
@@ -91,16 +90,15 @@ const Create = () => {
 
     setShowAlert(true);
   };
-
   return (
-    <div className="container-fluid mt-5">
-      <div className="row">
+    <div className="container mx-auto mt-1 py-1">
+      <div className="flex flex-wrap justify-center">
         <main
           role="main"
-          className="col-lg-12 mx-auto"
-          style={{ maxWidth: "1000px" }}
+          className="lg:w-full mx-auto py-10"
+          style={{ maxWidth: "1200px" }}
         >
-          <div className="content mx-auto">
+          <div className="content mx-auto py-10">
             {isCreating ? (
               <Alert
                 message={"Creation Pending..."}
@@ -125,40 +123,46 @@ const Create = () => {
             ) : (
               <></>
             )}
-            <Row className="g-4">
-              <Form.Control
+            <div className="grid grid-cols-1 gap-4 py-10">
+              <input
                 type="file"
                 required
                 name="file"
                 onChange={uploadToIPFS}
+                className="col-span-1 border"
               />
-              <Form.Control
+              <input
                 onChange={(e) => setName(e.target.value)}
                 size="lg"
                 required
                 type="text"
                 placeholder="Name"
+                className="col-span-1 border"
               />
-              <Form.Control
+              <textarea
                 onChange={(e) => setDescription(e.target.value)}
                 size="lg"
                 required
-                as="textarea"
                 placeholder="Description"
+                className="col-span-1 border"
               />
-              <Form.Control
+              <input
                 onChange={(e) => setPrice(e.target.value)}
                 size="lg"
                 required
                 type="number"
                 placeholder="Price in ETH"
+                className="col-span-1 border"
               />
-              <div className="d-grid px-0">
-                <Button onClick={createNFT} variant="primary" size="lg">
+              <div className="col-span-1">
+                <button
+                  onClick={createNFT}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
                   Create & List NFT!
-                </Button>
+                </button>
               </div>
-            </Row>
+            </div>
           </div>
         </main>
       </div>

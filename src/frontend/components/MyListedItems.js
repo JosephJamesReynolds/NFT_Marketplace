@@ -1,25 +1,27 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { Row, Col, Card } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 function renderSoldItems(items) {
   return (
     <>
       <h2>Sold</h2>
-      <Row xs={1} md={2} lg={4} className="g-4 py-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
         {items.map((item, idx) => (
-          <Col key={idx} className="overflow-hidden">
-            <Card>
-              <Card.Img variant="top" src={item.image} />
-              <Card.Footer>
+          <div key={idx} className="overflow-hidden">
+            <div className="bg-white shadow rounded-lg">
+              <img
+                className="w-full h-48 rounded-t-lg object-cover"
+                src={item.image}
+              />
+              <div className="p-4">
                 For {ethers.utils.formatEther(item.totalPrice)} ETH - Recieved{" "}
                 {ethers.utils.formatEther(item.price)} ETH
-              </Card.Footer>
-            </Card>
-          </Col>
+              </div>
+            </div>
+          </div>
         ))}
-      </Row>
+      </div>
     </>
   );
 }
@@ -76,7 +78,7 @@ export default function MyListedItems() {
   }, [marketplace, nft, account]);
   if (loading) {
     return (
-      <main style={{ padding: "1rem 0" }}>
+      <main className="py-4">
         <h2>Loading...</h2>
       </main>
     );
@@ -86,22 +88,25 @@ export default function MyListedItems() {
         {listedItems.length > 0 ? (
           <div className="px-5 py-3 container">
             <h2>Listed</h2>
-            <Row xs={1} md={2} lg={4} className="g-4 py-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
               {listedItems.map((item, idx) => (
-                <Col key={idx} className="overflow-hidden">
-                  <Card>
-                    <Card.Img variant="top" src={item.image} />
-                    <Card.Footer>
+                <div key={idx} className="overflow-hidden">
+                  <div className="bg-white shadow rounded-lg">
+                    <img
+                      className="w-full h-48 rounded-t-lg object-cover"
+                      src={item.image}
+                    />
+                    <div className="p-4">
                       {ethers.utils.formatEther(item.totalPrice)} ETH
-                    </Card.Footer>
-                  </Card>
-                </Col>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </Row>
+            </div>
             {soldItems.length > 0 && renderSoldItems(soldItems)}
           </div>
         ) : (
-          <main style={{ padding: "1rem 0" }}>
+          <main className="py-4">
             <h2>No listed assets</h2>
           </main>
         )}

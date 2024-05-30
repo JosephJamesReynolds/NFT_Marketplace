@@ -1,5 +1,6 @@
 import { render } from "react-dom";
-import "bootstrap/dist/css/bootstrap.css";
+import "./frontend/components/index.css";
+
 import App from "./frontend/components/App";
 import * as serviceWorker from "./serviceWorker";
 
