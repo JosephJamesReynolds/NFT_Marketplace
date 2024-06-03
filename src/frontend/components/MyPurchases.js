@@ -84,38 +84,41 @@ export default function MyPurchases() {
       </main>
     );
   return (
-    <div className="flex justify-center">
-      {purchases.length > 0 ? (
-        <div className="px-5 container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-5">
-            {purchases.map((item, idx) => (
-              <div key={idx}>
-                <div className="bg-white shadow rounded-lg">
-                  <img
-                    className="w-full"
-                    src={item.image}
-                    alt="Sunset in the mountains"
-                  />
-                  <div className="p-4">
-                    <strong>Name:</strong>{" "}
-                    <div style={scrollableText}>{item.name}</div>
-                    <br />
-                    <strong>Description:</strong>{" "}
-                    <div style={scrollableText}>{item.description}</div>
-                    <br />
-                    <strong>Price:</strong>{" "}
-                    {ethers.utils.formatEther(item.totalPrice)} ETH
+    <>
+      <h1 className="text-4xl font-bold my-4 text-center">My Collection</h1>
+      <div className="flex justify-center">
+        {purchases.length > 0 ? (
+          <div className="px-5 container">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-5">
+              {purchases.map((item, idx) => (
+                <div key={idx}>
+                  <div className="bg-white shadow rounded-lg">
+                    <img
+                      className="w-full"
+                      src={item.image}
+                      alt="Sunset in the mountains"
+                    />
+                    <div className="p-4">
+                      <strong>Name:</strong>{" "}
+                      <div style={scrollableText}>{item.name}</div>
+                      <br />
+                      <strong>Description:</strong>{" "}
+                      <div style={scrollableText}>{item.description}</div>
+                      <br />
+                      <strong>Price:</strong>{" "}
+                      {ethers.utils.formatEther(item.totalPrice)} ETH
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ) : (
-        <main className="py-4">
-          <h2>No purchases</h2>
-        </main>
-      )}
-    </div>
+        ) : (
+          <main className="py-4">
+            <h2 className="text-4xl font-bold text-center">No purchases</h2>
+          </main>
+        )}
+      </div>
+    </>
   );
 }

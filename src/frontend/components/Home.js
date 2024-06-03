@@ -119,7 +119,7 @@ const Home = () => {
         </div>
       ) : (
         <main className="p-4">
-          <h2>No listed assets</h2>
+          <h1 className="text-4xl font-bold">No listed assets</h1>
         </main>
       )}
     </div>

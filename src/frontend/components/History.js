@@ -19,23 +19,23 @@ const History = () => {
   return (
     <div>
       {provider && marketplace ? (
-        <div className="w-full overflow-x-auto">
+        <div className=" w-full overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-s font-bold text-gray-500 uppercase tracking-wider">
                   Transaction Hash
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-s font-bold text-gray-500 uppercase tracking-wider">
                   NFT ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-s font-bold text-gray-500 uppercase tracking-wider">
                   Price
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-s font-bold text-gray-500 uppercase tracking-wider">
                   Buyer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-s font-bold text-gray-500 uppercase tracking-wider">
                   Seller
                 </th>
               </tr>

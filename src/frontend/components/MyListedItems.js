@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 function renderSoldItems(items, scrollableText) {
   return (
     <>
-      <h2>Sold</h2>
+      <h2 className="text-4xl font-bold">Sold</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
         {items.map((item, idx) => (
           <div key={idx}>
@@ -99,7 +99,7 @@ export default function MyListedItems() {
       <div className="flex justify-center">
         {listedItems.length > 0 ? (
           <div className="px-5 py-3 container">
-            <h2>Listed</h2>
+            <h2 className="text-4xl font-bold">Listed</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
               {listedItems.map((item, idx) => (
                 <div key={idx}>
@@ -123,7 +123,7 @@ export default function MyListedItems() {
           </div>
         ) : (
           <main className="py-4">
-            <h2>No listed assets</h2>
+            <h2 className="text-4xl font-bold">No listed assets</h2>
           </main>
         )}
       </div>
