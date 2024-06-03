@@ -15,4 +15,3 @@ contract NFT is ERC721URIStorage {
         return (tokenCount);
     }
 }
-// Possibly put in require for erro handling

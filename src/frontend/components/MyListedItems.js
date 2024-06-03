@@ -2,21 +2,24 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
 
-function renderSoldItems(items) {
+function renderSoldItems(items, scrollableText) {
   return (
     <>
       <h2>Sold</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
         {items.map((item, idx) => (
-          <div key={idx} className="overflow-hidden">
+          <div key={idx}>
             <div className="bg-white shadow rounded-lg">
-              <img
-                className="w-full h-48 rounded-t-lg object-cover"
-                src={item.image}
-              />
+              <img className="w-full" src={item.image} alt={item.name} />
               <div className="p-4">
-                For {ethers.utils.formatEther(item.totalPrice)} ETH - Recieved{" "}
-                {ethers.utils.formatEther(item.price)} ETH
+                <strong>Name:</strong>{" "}
+                <div style={scrollableText}>{item.name}</div>
+                <br />
+                <strong>Description:</strong>{" "}
+                <div style={scrollableText}>{item.description}</div>
+                <br />
+                <strong>Price:</strong>{" "}
+                {ethers.utils.formatEther(item.totalPrice)} ETH
               </div>
             </div>
           </div>
@@ -27,12 +30,21 @@ function renderSoldItems(items) {
 }
 
 export default function MyListedItems() {
+  //REDUX
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
+
+  //REACT STATE
   const [loading, setLoading] = useState(true);
   const [listedItems, setListedItems] = useState([]);
   const [soldItems, setSoldItems] = useState([]);
+
+  const scrollableText = {
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+  };
+
   useEffect(() => {
     if (!marketplace || !account) {
       return;
@@ -90,20 +102,24 @@ export default function MyListedItems() {
             <h2>Listed</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
               {listedItems.map((item, idx) => (
-                <div key={idx} className="overflow-hidden">
+                <div key={idx}>
                   <div className="bg-white shadow rounded-lg">
-                    <img
-                      className="w-full h-48 rounded-t-lg object-cover"
-                      src={item.image}
-                    />
+                    <img className="w-full" src={item.image} alt={item.name} />
                     <div className="p-4">
+                      <strong>Name:</strong>{" "}
+                      <div style={scrollableText}>{item.name}</div>
+                      <br />
+                      <strong>Description:</strong>{" "}
+                      <div style={scrollableText}>{item.description}</div>
+                      <br />
+                      <strong>Price:</strong>{" "}
                       {ethers.utils.formatEther(item.totalPrice)} ETH
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            {soldItems.length > 0 && renderSoldItems(soldItems)}
+            {soldItems.length > 0 && renderSoldItems(soldItems, scrollableText)}
           </div>
         ) : (
           <main className="py-4">

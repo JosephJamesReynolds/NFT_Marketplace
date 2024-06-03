@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ethers } from "ethers";
-
 import { loadAllItemsPurchased } from "./store/interactions";
 
 const History = () => {
+  // REDUX
   const dispatch = useDispatch();
-
   const provider = useSelector((state) => state.provider.connection);
   const marketplace = useSelector((state) => state.marketplace.contract);
   const transactions = useSelector((state) => state.marketplace.items);
@@ -15,7 +14,7 @@ const History = () => {
     if (provider && marketplace) {
       loadAllItemsPurchased(provider, marketplace, dispatch);
     }
-  }, [provider, marketplace]);
+  }, [provider, marketplace, dispatch]);
 
   return (
     <div>

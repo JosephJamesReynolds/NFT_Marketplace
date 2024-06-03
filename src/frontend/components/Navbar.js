@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import symbol from "./symbol.png";
-
-//Redux components
 import { loadAccount } from "./store/interactions";
 import { useSelector, useDispatch } from "react-redux";
 
 const Navigation = () => {
+  // REDUX
   const dispatch = useDispatch();
-  const account = useSelector((state) => state.provider.account); // Select account from Redux store
+  const account = useSelector((state) => state.provider.account);
 
   const handleConnectWallet = async () => {
     await loadAccount(dispatch);

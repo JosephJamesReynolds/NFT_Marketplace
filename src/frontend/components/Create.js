@@ -1,18 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
-import { ethers } from "ethers";
 import Alert from "./Alert";
-
-// Redux components
 import { useSelector, useDispatch } from "react-redux";
 import { makeItem } from "./store/interactions";
 
-//API keys
+// API keys
 const privateApiKey = process.env.REACT_APP_PRIVATE_API_KEY || "";
 const privateSecretApiKey = process.env.REACT_APP_PRIVATE_API_SECRET_KEY || "";
 
 const Create = () => {
-  // Redux state
+  // REDUX
   const provider = useSelector((state) => state.provider.connection);
   const nft = useSelector((state) => state.nft.contracts);
   const marketplace = useSelector((state) => state.marketplace.contract);
@@ -28,7 +25,7 @@ const Create = () => {
   );
   const dispatch = useDispatch();
 
-  // React state
+  // REACT STATE
   const [showAlert, setShowAlert] = useState(false);
   const [image, setImage] = useState("");
   const [price, setPrice] = useState(null);
@@ -137,22 +134,25 @@ const Create = () => {
                 required
                 type="text"
                 placeholder="Name"
-                className="col-span-1 border"
+                className="col-span-1 border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
               />
+
               <textarea
                 onChange={(e) => setDescription(e.target.value)}
                 size="lg"
                 required
                 placeholder="Description"
-                className="col-span-1 border"
+                className="col-span-1 border-2 border-gray-300 bg-white px-5 pr-16 rounded-lg text-sm focus:outline-none flex items-center justify-center"
+                style={{ height: "80px" }}
               />
+
               <input
                 onChange={(e) => setPrice(e.target.value)}
                 size="lg"
                 required
                 type="number"
                 placeholder="Price in ETH"
-                className="col-span-1 border"
+                className="col-span-1 border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
               />
               <div className="col-span-1">
                 <button

@@ -3,15 +3,14 @@ import { useSelector } from "react-redux";
 import { ethers } from "ethers";
 
 export default function MyPurchases() {
-  const [loading, setLoading] = useState(true);
-  const [purchases, setPurchases] = useState([]);
-
-  // Access state from Redux store
+  // REDUX
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
 
-  // Add loading states for marketplace, nft, and account
+  // REACT STATE
+  const [loading, setLoading] = useState(true);
+  const [purchases, setPurchases] = useState([]);
   const [marketplaceLoaded, setMarketplaceLoaded] = useState(false);
   const [nftLoaded, setNftLoaded] = useState(false);
   const [accountLoaded, setAccountLoaded] = useState(false);
@@ -71,7 +70,12 @@ export default function MyPurchases() {
     };
 
     loadPurchasedItems();
-  }, [marketplaceLoaded, nftLoaded, accountLoaded]); // Depend on loading states instead
+  }, [marketplaceLoaded, nftLoaded, accountLoaded, marketplace, nft, account]);
+
+  const scrollableText = {
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+  };
 
   if (loading)
     return (
@@ -85,17 +89,22 @@ export default function MyPurchases() {
         <div className="px-5 container">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-5">
             {purchases.map((item, idx) => (
-              <div key={idx} className="overflow-hidden">
-                <div className="max-w-sm rounded overflow-hidden shadow-lg">
+              <div key={idx}>
+                <div className="bg-white shadow rounded-lg">
                   <img
                     className="w-full"
                     src={item.image}
                     alt="Sunset in the mountains"
                   />
-                  <div className="px-6 py-4">
-                    <div className="font-bold text-xl mb-2">
-                      {ethers.utils.formatEther(item.totalPrice)} ETH
-                    </div>
+                  <div className="p-4">
+                    <strong>Name:</strong>{" "}
+                    <div style={scrollableText}>{item.name}</div>
+                    <br />
+                    <strong>Description:</strong>{" "}
+                    <div style={scrollableText}>{item.description}</div>
+                    <br />
+                    <strong>Price:</strong>{" "}
+                    {ethers.utils.formatEther(item.totalPrice)} ETH
                   </div>
                 </div>
               </div>
