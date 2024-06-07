@@ -38,9 +38,9 @@ export default function MyListedItems() {
   const account = useSelector((state) => state.provider.account);
 
   //REACT STATE
-  const [loading, setLoading] = useState(true);
   const [listedItems, setListedItems] = useState([]);
   const [soldItems, setSoldItems] = useState([]);
+  const [loading, setLoading] = useState(true); // New state for loading status
 
   const scrollableText = {
     overflowX: "auto",
@@ -52,50 +52,54 @@ export default function MyListedItems() {
   };
 
   useEffect(() => {
-    if (!marketplace || !account) {
-      return;
-    }
     const loadListedItems = async () => {
       if (!marketplace || !account) {
-        console.log("Marketplace or account is not initialized");
+        setLoading(false); // Ensure loading is set to false if preconditions fail
         return;
       }
-      // Load all sold items that the user listed
-      const itemCount = await marketplace.itemCount();
-      let listedItems = [];
-      let soldItems = [];
-      for (let indx = 1; indx <= itemCount; indx++) {
-        const i = await marketplace.items(indx);
-        if (i.seller.toLowerCase() === account.toLowerCase()) {
-          // get uri url from nft contract
-          const uri = await nft.tokenURI(i.tokenId);
-          // use uri to fetch the nft metadata stored on ipfs
-          const response = await fetch(uri);
-          const metadata = await response.json();
-          // get total price of item (item price + fee)
-          const totalPrice = await marketplace.getTotalPrice(i.itemId);
-          // define listed item object
-          let item = {
-            totalPrice,
-            price: i.price,
-            itemId: i.itemId,
-            name: metadata.name,
-            description: metadata.description,
-            image: metadata.image,
-          };
-          listedItems.push(item);
-          // Add listed item to sold items array if sold
-          if (i.sold) soldItems.push(item);
+      try {
+        const itemCount = await marketplace.itemCount();
+        let listedItems = [];
+        let soldItems = [];
+        for (let indx = 1; indx <= itemCount; indx++) {
+          const i = await marketplace.items(indx);
+          if (i.seller.toLowerCase() === account.toLowerCase()) {
+            const uri = await nft.tokenURI(i.tokenId);
+            const response = await fetch(uri);
+            const metadata = await response.json();
+            const totalPrice = await marketplace.getTotalPrice(i.itemId);
+            let item = {
+              totalPrice,
+              price: i.price,
+              itemId: i.itemId,
+              name: metadata.name,
+              description: metadata.description,
+              image: metadata.image,
+            };
+            listedItems.push(item);
+            if (i.sold) soldItems.push(item);
+          }
         }
+        setListedItems(listedItems);
+        setSoldItems(soldItems);
+      } catch (error) {
+        console.error("Failed to load items:", error);
+      } finally {
+        setLoading(false); // Ensure loading is set to false after the async operation
       }
-      setLoading(false);
-      setListedItems(listedItems);
-      setSoldItems(soldItems);
     };
     loadListedItems();
   }, [marketplace, nft, account]);
 
   if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  if (!account) {
     return (
       <main
         className="py-4"
@@ -106,14 +110,13 @@ export default function MyListedItems() {
             Welcome to Joseph's NFT Marketplace.
           </h2>
           <h2 style={{ marginTop: "20px", fontSize: "30px" }}>
-            Please{" "}
             <button
               onClick={handleConnectWallet}
               className="bg-blue-500 text-white px-2 py-1 rounded transition duration-500 ease-in-out hover:bg-blue-700"
             >
-              connect your wallet
+              Connect your wallet
             </button>{" "}
-            to get started
+            to get started.
           </h2>
         </div>
       </main>
