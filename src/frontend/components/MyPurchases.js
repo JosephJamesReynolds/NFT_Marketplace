@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { loadAccount } from "./store/interactions";
 import { ethers } from "ethers";
 
 export default function MyPurchases() {
   // REDUX
+  const dispatch = useDispatch();
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
@@ -14,6 +16,10 @@ export default function MyPurchases() {
   const [marketplaceLoaded, setMarketplaceLoaded] = useState(false);
   const [nftLoaded, setNftLoaded] = useState(false);
   const [accountLoaded, setAccountLoaded] = useState(false);
+
+  const handleConnectWallet = async () => {
+    await loadAccount(dispatch);
+  };
 
   useEffect(() => {
     if (marketplace) setMarketplaceLoaded(true);
@@ -85,6 +91,21 @@ export default function MyPurchases() {
     );
   return (
     <>
+      <div style={{ margin: "20px 0" }}>
+        <h2 style={{ fontSize: "36px" }}>
+          Welcome to Joseph's NFT Marketplace.
+        </h2>
+        <h2 style={{ marginTop: "20px", fontSize: "30px" }}>
+          Please{" "}
+          <button
+            onClick={handleConnectWallet}
+            className="bg-blue-500 text-white px-2 py-1 rounded transition duration-500 ease-in-out hover:bg-blue-700"
+          >
+            connect your wallet
+          </button>{" "}
+          to get started
+        </h2>
+      </div>
       <h1 className="text-4xl font-bold my-4 text-center">My Collection</h1>
       <div className="flex justify-center">
         {purchases.length > 0 ? (
@@ -115,7 +136,7 @@ export default function MyPurchases() {
           </div>
         ) : (
           <main className="py-4">
-            <h2 className="text-4xl font-bold text-center">No purchases</h2>
+            <h2 className="text-3xl  text-center">No purchases</h2>
           </main>
         )}
       </div>

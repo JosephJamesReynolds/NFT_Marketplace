@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { loadAccount } from "./store/interactions";
 
 function renderSoldItems(items, scrollableText) {
   return (
@@ -31,6 +32,7 @@ function renderSoldItems(items, scrollableText) {
 
 export default function MyListedItems() {
   //REDUX
+  const dispatch = useDispatch();
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
@@ -43,6 +45,10 @@ export default function MyListedItems() {
   const scrollableText = {
     overflowX: "auto",
     whiteSpace: "nowrap",
+  };
+
+  const handleConnectWallet = async () => {
+    await loadAccount(dispatch);
   };
 
   useEffect(() => {
@@ -88,10 +94,28 @@ export default function MyListedItems() {
     };
     loadListedItems();
   }, [marketplace, nft, account]);
+
   if (loading) {
     return (
-      <main className="py-4">
-        <h2>Loading...</h2>
+      <main
+        className="py-4"
+        style={{ fontSize: "24px", fontFamily: "Arial, sans-serif" }}
+      >
+        <div style={{ margin: "20px 0" }}>
+          <h2 style={{ fontSize: "36px" }}>
+            Welcome to Joseph's NFT Marketplace.
+          </h2>
+          <h2 style={{ marginTop: "20px", fontSize: "30px" }}>
+            Please{" "}
+            <button
+              onClick={handleConnectWallet}
+              className="bg-blue-500 text-white px-2 py-1 rounded transition duration-500 ease-in-out hover:bg-blue-700"
+            >
+              connect your wallet
+            </button>{" "}
+            to get started
+          </h2>
+        </div>
       </main>
     );
   } else {
