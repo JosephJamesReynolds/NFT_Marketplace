@@ -1,10 +1,11 @@
 import { HashRouter, Routes, Route } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 //Components
 import Navigation from "./Navbar";
+import Intro from "./Intro";
 import Home from "./Home.js";
 import Create from "./Create.js";
 import MyListedItems from "./MyListedItems.js";
@@ -24,7 +25,7 @@ import {
 function App() {
   const dispatch = useDispatch();
 
-  const loadBlockchainData = async () => {
+  const loadBlockchainData = useCallback(async () => {
     // Initiate provider
     const provider = await loadProvider(dispatch);
 
@@ -44,11 +45,11 @@ function App() {
     // Initiate contracts
     await loadNFT(provider, chainId, dispatch);
     await loadMarketplace(provider, chainId, dispatch);
-  };
+  }, [dispatch]); // dispatch is stable and doesn't change, so it's safe to include
 
   useEffect(() => {
     loadBlockchainData();
-  }, []);
+  }, [loadBlockchainData]); // Now loadBlockchainData is a dependency, but it's memoized with useCallback
 
   return (
     <HashRouter>
@@ -58,7 +59,8 @@ function App() {
         </>
         <div>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Intro />} />
+            <Route path="/Home" element={<Home />} />
             <Route path="/create" element={<Create />} />
             <Route path="/my-listed-items" element={<MyListedItems />} />
             <Route path="/my-purchases" element={<MyPurchases />} />

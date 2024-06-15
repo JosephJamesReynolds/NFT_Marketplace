@@ -1,16 +1,23 @@
 const Alert = ({ message, transactionHash, variant, setShowAlert }) => {
-  const alertColor =
-    variant === "danger" ? "red" : variant === "success" ? "green" : "blue";
+  const alertClasses = {
+    danger: "border-red-500 text-red-700 fill-current h-6 w-6 text-red-500",
+    success:
+      "border-green-500 text-green-700 fill-current h-6 w-6 text-green-500",
+    info: "border-blue-500 text-blue-700 fill-current h-6 w-6 text-blue-500",
+  };
+
+  // Choose the right class based on the variant
+  const selectedClass = alertClasses[variant] || alertClasses.info;
 
   return (
     <div
-      className={`border-l-4 border-${alertColor}-500 text-${alertColor}-700 p-4`}
+      className={`border-l-4 ${selectedClass.split(" ")[0]} p-4`}
       role="alert"
     >
       <div className="flex">
         <div className="py-1">
           <svg
-            className="fill-current h-6 w-6 text-${alertColor}-500 mr-4"
+            className={`mr-4 ${selectedClass}`}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
           >
@@ -21,9 +28,7 @@ const Alert = ({ message, transactionHash, variant, setShowAlert }) => {
           <p className="font-bold">{message}</p>
           {transactionHash && (
             <p className="text-sm">
-              {transactionHash.slice(0, 6) +
-                "..." +
-                transactionHash.slice(60, 66)}
+              {transactionHash.slice(0, 6) + "..." + transactionHash.slice(-6)}
             </p>
           )}
         </div>
@@ -33,7 +38,7 @@ const Alert = ({ message, transactionHash, variant, setShowAlert }) => {
         onClick={() => setShowAlert(false)}
       >
         <svg
-          className="fill-current h-6 w-6 text-${alertColor}-500"
+          className={`fill-current h-6 w-6 ${selectedClass.split(" ")[4]}`}
           role="button"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"

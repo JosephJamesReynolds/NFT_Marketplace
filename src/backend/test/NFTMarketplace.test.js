@@ -19,8 +19,8 @@ describe("NFTMarketplace", function () {
   });
   describe("Deployment", function () {
     it("Should track name and symbol of the NFT collection", async function () {
-      expect(await nft.name()).to.equal("DApp NFT");
-      expect(await nft.symbol()).to.equal("DAPP");
+      expect(await nft.name()).to.equal("Joey NFT");
+      expect(await nft.symbol()).to.equal("JOE");
     });
     it("Should track feeAccount and feePercent of the marketplace", async function () {
       expect(await marketplace.feeAccount()).to.equal(deployer.address);
