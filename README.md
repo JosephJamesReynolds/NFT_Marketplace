@@ -2,7 +2,9 @@
 
 ## Demo
 
-Check out the [demo video](/link-to-your-video) on the Intro page to see the NFT Marketplace in action.
+Check out the [demo video](https://youtu.be/nIaH8G0XUhU) on the Intro page to see the NFT Marketplace in action.
+
+For a technical explanation, see the [technical video](https://youtu.be/Ya4aLRYMHAI).
 
 ## Technology Stack & Tools
 
@@ -70,11 +72,6 @@ $ npx hardhat test
 ```bash
 $ npm run start
 ```
-
-## Additional Notes
-
-- Ensure you have configured Redux in your project for state management.
-- For deploying to Sepolia, make sure you have the network configured in your Hardhat setup.
 
 ## License
 
