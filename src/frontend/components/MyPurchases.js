@@ -5,7 +5,7 @@ import { loadAccount } from "./store/interactions";
 import { ethers } from "ethers";
 
 export default function MyPurchases() {
-  // REDUX
+  // REDUX STATE
   const dispatch = useDispatch();
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
@@ -13,7 +13,7 @@ export default function MyPurchases() {
 
   // REACT STATE
   const [purchases, setPurchases] = useState([]);
-  const [loading, setLoading] = useState(true); // New state for loading status
+  const [loading, setLoading] = useState(true);
 
   const handleConnectWallet = async () => {
     await loadAccount(dispatch);

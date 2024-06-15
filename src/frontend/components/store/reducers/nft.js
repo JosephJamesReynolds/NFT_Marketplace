@@ -13,4 +13,3 @@ export const nft = createSlice({
 export const { setContracts } = nft.actions;
 
 export default nft.reducer;
-// Path: src/frontend/components/store/reducers/nft.js

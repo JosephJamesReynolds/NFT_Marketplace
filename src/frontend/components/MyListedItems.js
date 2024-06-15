@@ -31,16 +31,16 @@ function renderSoldItems(items, scrollableText) {
 }
 
 export default function MyListedItems() {
-  //REDUX
+  // REDUX STATE
   const dispatch = useDispatch();
   const marketplace = useSelector((state) => state.marketplace.contract);
   const nft = useSelector((state) => state.nft.contracts);
   const account = useSelector((state) => state.provider.account);
 
-  //REACT STATE
+  // REACT STATE
   const [listedItems, setListedItems] = useState([]);
   const [soldItems, setSoldItems] = useState([]);
-  const [loading, setLoading] = useState(true); // New state for loading status
+  const [loading, setLoading] = useState(true);
 
   const scrollableText = {
     overflowX: "auto",

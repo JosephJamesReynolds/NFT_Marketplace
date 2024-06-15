@@ -29,7 +29,7 @@ function App() {
     // Initiate provider
     const provider = await loadProvider(dispatch);
 
-    // Fetch current network's chainId (e.g. for hardhat: 31337, kovan: 42, etc.)
+    // Fetch current network's chainId
     const chainId = await loadNetwork(provider, dispatch);
 
     // Reload page when network changes
@@ -45,11 +45,11 @@ function App() {
     // Initiate contracts
     await loadNFT(provider, chainId, dispatch);
     await loadMarketplace(provider, chainId, dispatch);
-  }, [dispatch]); // dispatch is stable and doesn't change, so it's safe to include
+  }, [dispatch]);
 
   useEffect(() => {
     loadBlockchainData();
-  }, [loadBlockchainData]); // Now loadBlockchainData is a dependency, but it's memoized with useCallback
+  }, [loadBlockchainData]);
 
   return (
     <HashRouter>

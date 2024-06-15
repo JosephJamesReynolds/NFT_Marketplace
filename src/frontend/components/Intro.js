@@ -5,10 +5,8 @@ const Intro = () => {
     <div className="flex flex-col items-center justify-center w-full h-screen">
       <div className="mb-5">
         {" "}
-        {/* Adjust bottom margin as needed */}
         <h1 className="text-4xl mb-8">
           {" "}
-          {/* Adjust bottom margin to control space between text and video */}
           Wanna get started? Watch the video below.
         </h1>
         <iframe

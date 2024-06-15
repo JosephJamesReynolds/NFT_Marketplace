@@ -7,7 +7,7 @@ import { buyItem, loadAccount } from "./store/interactions";
 import Alert from "./Alert";
 
 const Home = () => {
-  // Redux state
+  // REDUX STATE
   const provider = useSelector((state) => state.provider.connection);
   const account = useSelector((state) => state.provider.account);
   const marketplace = useSelector((state) => state.marketplace.contract);
@@ -19,6 +19,7 @@ const Home = () => {
   );
   const dispatch = useDispatch();
 
+  // REACT STATE
   const [items, setItems] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [loading, setLoading] = useState(true); // Added loading state

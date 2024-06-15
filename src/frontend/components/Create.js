@@ -9,7 +9,7 @@ const privateApiKey = process.env.REACT_APP_PRIVATE_API_KEY || "";
 const privateSecretApiKey = process.env.REACT_APP_PRIVATE_API_SECRET_KEY || "";
 
 const Create = () => {
-  // REDUX
+  // REDUX STATE
   const provider = useSelector((state) => state.provider.connection);
   const nft = useSelector((state) => state.nft.contracts);
   const marketplace = useSelector((state) => state.marketplace.contract);

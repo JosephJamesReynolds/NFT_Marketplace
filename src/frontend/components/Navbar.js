@@ -4,6 +4,7 @@ import { loadAccount } from "./store/interactions";
 import { useSelector, useDispatch } from "react-redux";
 
 const Navigation = () => {
+  // REDUX STATE
   const dispatch = useDispatch();
   const account = useSelector((state) => state.provider.account);
 

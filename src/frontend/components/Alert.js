@@ -6,7 +6,6 @@ const Alert = ({ message, transactionHash, variant, setShowAlert }) => {
     info: "border-blue-500 text-blue-700 fill-current h-6 w-6 text-blue-500",
   };
 
-  // Choose the right class based on the variant
   const selectedClass = alertClasses[variant] || alertClasses.info;
 
   return (
