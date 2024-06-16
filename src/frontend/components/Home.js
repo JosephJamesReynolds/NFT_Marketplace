@@ -22,7 +22,7 @@ const Home = () => {
   // REACT STATE
   const [items, setItems] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
 
   const handleConnectWallet = async () => {
     await loadAccount(dispatch);
@@ -59,7 +59,7 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
-  }, [marketplace, nft, account]); // Dependencies
+  }, [marketplace, nft, account]);
 
   useEffect(() => {
     loadMarketplaceItems();

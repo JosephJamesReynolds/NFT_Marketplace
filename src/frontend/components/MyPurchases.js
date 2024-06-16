@@ -22,7 +22,7 @@ export default function MyPurchases() {
   useEffect(() => {
     const loadPurchasedItems = async () => {
       if (!marketplace || !nft || !account) {
-        setLoading(false); // Ensure loading is set to false if preconditions fail
+        setLoading(false);
         return;
       }
       try {
@@ -57,7 +57,7 @@ export default function MyPurchases() {
       } catch (error) {
         console.error("Failed to load purchases:", error);
       } finally {
-        setLoading(false); // Ensure loading is set to false after the async operation
+        setLoading(false);
       }
     };
 

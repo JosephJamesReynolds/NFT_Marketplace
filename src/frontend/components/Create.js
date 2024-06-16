@@ -74,7 +74,7 @@ const Create = () => {
 
     if (!image || !price || !name || !description) return;
 
-    setShowAlert(false); // Hide any previous alerts
+    setShowAlert(false);
 
     const file = new Blob(
       [JSON.stringify({ image, price, name, description })],

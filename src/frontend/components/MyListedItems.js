@@ -54,7 +54,7 @@ export default function MyListedItems() {
   useEffect(() => {
     const loadListedItems = async () => {
       if (!marketplace || !account) {
-        setLoading(false); // Ensure loading is set to false if preconditions fail
+        setLoading(false);
         return;
       }
       try {
@@ -85,7 +85,7 @@ export default function MyListedItems() {
       } catch (error) {
         console.error("Failed to load items:", error);
       } finally {
-        setLoading(false); // Ensure loading is set to false after the async operation
+        setLoading(false);
       }
     };
     loadListedItems();

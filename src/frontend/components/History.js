@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { loadAllItemsPurchased } from "./store/interactions";
 
 const History = () => {
-  // REDUX
+  // REDUX STATE
   const dispatch = useDispatch();
   const provider = useSelector((state) => state.provider.connection);
   const marketplace = useSelector((state) => state.marketplace.contract);
