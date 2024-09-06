@@ -9,7 +9,10 @@ function renderSoldItems(items) {
       <h2 className="text-2xl sm:text-4xl font-bold mb-6 mt-12">Sold</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {items.map((item, idx) => (
-          <div key={idx} className="bg-white shadow rounded-lg overflow-hidden">
+          <div
+            key={idx}
+            className="bg-white shadow rounded-lg overflow-hidden flex flex-col h-full"
+          >
             <div className="aspect-w-1 aspect-h-1 w-full">
               <img
                 className="w-full h-full object-cover"
@@ -21,19 +24,23 @@ function renderSoldItems(items) {
                 }}
               />
             </div>
-            <div className="p-4">
-              <strong>Name:</strong>{" "}
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {item.name}
+            <div className="p-4 flex-grow flex flex-col justify-between">
+              <div>
+                <strong>Name:</strong>{" "}
+                <div className="overflow-hidden text-ellipsis whitespace-nowrap mb-2">
+                  {item.name}
+                </div>
+                <strong>Description:</strong>{" "}
+                <div className="overflow-hidden text-ellipsis whitespace-nowrap mb-2">
+                  {item.description}
+                </div>
               </div>
-              <strong>Description:</strong>{" "}
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {item.description}
+              <div>
+                <strong>Price:</strong>{" "}
+                <span className="text-blue-600 font-semibold">
+                  {ethers.utils.formatEther(item.totalPrice)} ETH
+                </span>
               </div>
-              <strong>Price:</strong>{" "}
-              <span className="text-blue-600 font-semibold">
-                {ethers.utils.formatEther(item.totalPrice)} ETH
-              </span>
             </div>
           </div>
         ))}
@@ -141,7 +148,7 @@ export default function MyListedItems() {
               {listedItems.map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-white shadow rounded-lg overflow-hidden"
+                  className="bg-white shadow rounded-lg overflow-hidden flex flex-col h-full"
                 >
                   <div className="aspect-w-1 aspect-h-1 w-full">
                     <img
@@ -154,19 +161,23 @@ export default function MyListedItems() {
                       }}
                     />
                   </div>
-                  <div className="p-4">
-                    <strong>Name:</strong>{" "}
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                      {item.name}
+                  <div className="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                      <strong>Name:</strong>{" "}
+                      <div className="overflow-hidden text-ellipsis whitespace-nowrap mb-2">
+                        {item.name}
+                      </div>
+                      <strong>Description:</strong>{" "}
+                      <div className="overflow-hidden text-ellipsis whitespace-nowrap mb-2">
+                        {item.description}
+                      </div>
                     </div>
-                    <strong>Description:</strong>{" "}
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                      {item.description}
+                    <div>
+                      <strong>Price:</strong>{" "}
+                      <span className="text-blue-600 font-semibold">
+                        {ethers.utils.formatEther(item.totalPrice)} ETH
+                      </span>{" "}
                     </div>
-                    <strong>Price:</strong>{" "}
-                    <span className="text-blue-600 font-semibold">
-                      {ethers.utils.formatEther(item.totalPrice)} ETH
-                    </span>{" "}
                   </div>
                 </div>
               ))}

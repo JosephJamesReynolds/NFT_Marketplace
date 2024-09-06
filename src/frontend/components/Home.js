@@ -120,7 +120,7 @@ const Home = () => {
           {items.map((item, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
             >
               <div className="aspect-w-1 aspect-h-1 w-full">
                 <img
@@ -143,28 +143,30 @@ const Home = () => {
                   <p className="text-gray-700 text-sm mb-4 overflow-hidden line-clamp-3">
                     {item.description}
                   </p>
+                </div>
+                <div>
                   <strong>Price:</strong>{" "}
                   <div className="text-lg font-semibold text-blue-600 mb-4">
                     {ethers.utils.formatEther(item.totalPrice)} ETH
                   </div>
+                  <button
+                    onClick={async () => {
+                      setShowAlert(false);
+                      await buyItem(
+                        provider,
+                        marketplace,
+                        item.itemId,
+                        account,
+                        dispatch
+                      );
+                      await loadMarketplaceItems();
+                      setShowAlert(true);
+                    }}
+                    className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                  >
+                    Buy Now
+                  </button>
                 </div>
-                <button
-                  onClick={async () => {
-                    setShowAlert(false);
-                    await buyItem(
-                      provider,
-                      marketplace,
-                      item.itemId,
-                      account,
-                      dispatch
-                    );
-                    await loadMarketplaceItems();
-                    setShowAlert(true);
-                  }}
-                  className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-                >
-                  Buy Now
-                </button>
               </div>
             </div>
           ))}

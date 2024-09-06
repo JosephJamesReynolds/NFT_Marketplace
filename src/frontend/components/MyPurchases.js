@@ -106,7 +106,7 @@ export default function MyPurchases() {
           {purchases.map((item, idx) => (
             <div
               key={idx}
-              className="bg-white shadow rounded-lg overflow-hidden flex flex-col"
+              className="bg-white shadow rounded-lg overflow-hidden flex flex-col h-full"
             >
               <div className="aspect-w-1 aspect-h-1 w-full">
                 <img
@@ -129,6 +129,8 @@ export default function MyPurchases() {
                   <p className="text-gray-600 text-sm mb-4 overflow-hidden line-clamp-3">
                     {item.description}
                   </p>
+                </div>
+                <div>
                   <strong>Price:</strong>{" "}
                   <div className="text-lg font-semibold text-blue-600">
                     {ethers.utils.formatEther(item.totalPrice)} ETH
