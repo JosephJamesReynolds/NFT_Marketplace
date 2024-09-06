@@ -1,27 +1,39 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useSelector, useDispatch } from "react-redux";
 import { loadAccount } from "./store/interactions";
 
-function renderSoldItems(items, scrollableText) {
+function renderSoldItems(items) {
   return (
     <>
-      <h2 className="text-4xl font-bold">Sold</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
+      <h2 className="text-2xl sm:text-4xl font-bold mb-6 mt-12">Sold</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {items.map((item, idx) => (
-          <div key={idx}>
-            <div className="bg-white shadow rounded-lg">
-              <img className="w-full" src={item.image} alt={item.name} />
-              <div className="p-4">
-                <strong>Name:</strong>{" "}
-                <div style={scrollableText}>{item.name}</div>
-                <br />
-                <strong>Description:</strong>{" "}
-                <div style={scrollableText}>{item.description}</div>
-                <br />
-                <strong>Price:</strong>{" "}
-                {ethers.utils.formatEther(item.totalPrice)} ETH
+          <div key={idx} className="bg-white shadow rounded-lg overflow-hidden">
+            <div className="aspect-w-1 aspect-h-1 w-full">
+              <img
+                className="w-full h-full object-cover"
+                src={item.image}
+                alt={item.name}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "path/to/fallback/image.jpg";
+                }}
+              />
+            </div>
+            <div className="p-4">
+              <strong>Name:</strong>{" "}
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {item.name}
               </div>
+              <strong>Description:</strong>{" "}
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {item.description}
+              </div>
+              <strong>Price:</strong>{" "}
+              <span className="text-blue-600 font-semibold">
+                {ethers.utils.formatEther(item.totalPrice)} ETH
+              </span>
             </div>
           </div>
         ))}
@@ -41,11 +53,6 @@ export default function MyListedItems() {
   const [listedItems, setListedItems] = useState([]);
   const [soldItems, setSoldItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const scrollableText = {
-    overflowX: "auto",
-    whiteSpace: "nowrap",
-  };
 
   const handleConnectWallet = async () => {
     await loadAccount(dispatch);
@@ -102,7 +109,7 @@ export default function MyListedItems() {
   if (!account) {
     return (
       <main
-        className="py-4"
+        className="py-4 px-4 sm:px-0"
         style={{ fontSize: "24px", fontFamily: "Arial, sans-serif" }}
       >
         <div style={{ margin: "20px 0" }}>
@@ -112,48 +119,68 @@ export default function MyListedItems() {
           <h2 style={{ marginTop: "20px", fontSize: "30px" }}>
             <button
               onClick={handleConnectWallet}
-              className="bg-blue-500 text-white px-2 py-1 rounded transition duration-500 ease-in-out hover:bg-blue-700"
+              className="bg-blue-500 text-white px-4 py-2 rounded transition duration-500 ease-in-out hover:bg-blue-700"
+              style={{ fontSize: "inherit" }}
             >
               Connect your wallet
             </button>{" "}
-            to get started.
+            <span className="inline-block mt-2 sm:mt-0">to get started.</span>
           </h2>
         </div>
       </main>
     );
-  } else {
-    return (
-      <div className="flex justify-center">
-        {listedItems.length > 0 ? (
-          <div className="px-5 py-3 container">
-            <h2 className="text-4xl font-bold">Listed</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-3">
+  }
+
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {account ? (
+        listedItems.length > 0 ? (
+          <>
+            <h2 className="text-2xl sm:text-4xl font-bold mb-6">Listed</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {listedItems.map((item, idx) => (
-                <div key={idx}>
-                  <div className="bg-white shadow rounded-lg">
-                    <img className="w-full" src={item.image} alt={item.name} />
-                    <div className="p-4">
-                      <strong>Name:</strong>{" "}
-                      <div style={scrollableText}>{item.name}</div>
-                      <br />
-                      <strong>Description:</strong>{" "}
-                      <div style={scrollableText}>{item.description}</div>
-                      <br />
-                      <strong>Price:</strong>{" "}
-                      {ethers.utils.formatEther(item.totalPrice)} ETH
+                <div
+                  key={idx}
+                  className="bg-white shadow rounded-lg overflow-hidden"
+                >
+                  <div className="aspect-w-1 aspect-h-1 w-full">
+                    <img
+                      className="w-full h-full object-cover"
+                      src={item.image}
+                      alt={item.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "path/to/fallback/image.jpg";
+                      }}
+                    />
+                  </div>
+                  <div className="p-4">
+                    <strong>Name:</strong>{" "}
+                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                      {item.name}
                     </div>
+                    <strong>Description:</strong>{" "}
+                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                      {item.description}
+                    </div>
+                    <strong>Price:</strong>{" "}
+                    <span className="text-blue-600 font-semibold">
+                      {ethers.utils.formatEther(item.totalPrice)} ETH
+                    </span>{" "}
                   </div>
                 </div>
               ))}
             </div>
-            {soldItems.length > 0 && renderSoldItems(soldItems, scrollableText)}
-          </div>
+            {soldItems.length > 0 && renderSoldItems(soldItems)}
+          </>
         ) : (
-          <main className="py-4">
-            <h2 className="text-4xl font-bold">No listed assets</h2>
-          </main>
-        )}
-      </div>
-    );
-  }
+          <h2 className="text-2xl sm:text-4xl font-bold">No listed assets</h2>
+        )
+      ) : (
+        <main className="py-4">
+          <h2 className="text-2xl sm:text-4xl font-bold">No listed assets</h2>
+        </main>
+      )}
+    </div>
+  );
 }

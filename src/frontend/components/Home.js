@@ -1,6 +1,4 @@
-// Adjusted Home.js with loading logic and spinner from MyPurchases
-
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ethers } from "ethers";
 import { useSelector, useDispatch } from "react-redux";
 import { buyItem, loadAccount } from "./store/interactions";
@@ -64,6 +62,7 @@ const Home = () => {
   useEffect(() => {
     loadMarketplaceItems();
   }, [loadMarketplaceItems]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -75,7 +74,7 @@ const Home = () => {
   if (!account) {
     return (
       <main
-        className="py-4"
+        className="py-4 px-4 sm:px-0"
         style={{ fontSize: "24px", fontFamily: "Arial, sans-serif" }}
       >
         <div style={{ margin: "20px 0" }}>
@@ -85,85 +84,100 @@ const Home = () => {
           <h2 style={{ marginTop: "20px", fontSize: "30px" }}>
             <button
               onClick={handleConnectWallet}
-              className="bg-blue-500 text-white px-2 py-1 rounded transition duration-500 ease-in-out hover:bg-blue-700"
+              className="bg-blue-500 text-white px-4 py-2 rounded transition duration-500 ease-in-out hover:bg-blue-700"
+              style={{ fontSize: "inherit" }}
             >
               Connect your wallet
             </button>{" "}
-            to get started.
+            <span className="inline-block mt-2 sm:mt-0">to get started.</span>
           </h2>
         </div>
       </main>
     );
-  } else {
-    return (
-      <div className="flex justify-center">
-        {isBuying ? (
+  }
+
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {(isBuying || isSuccess || (!isSuccess && showAlert)) && (
+        <div className="mb-4">
           <Alert
-            message={"Purchase Pending..."}
-            transactionHash={null}
-            variant={"info"}
+            message={
+              isBuying
+                ? "Purchase Pending..."
+                : isSuccess
+                ? "Purchase Successful"
+                : "Purchase Failed"
+            }
+            transactionHash={isSuccess ? transactionHash : null}
+            variant={isBuying ? "info" : isSuccess ? "success" : "danger"}
             setShowAlert={setShowAlert}
           />
-        ) : isSuccess && showAlert ? (
-          <Alert
-            message={"Purchase Successful"}
-            transactionHash={transactionHash}
-            variant={"success"}
-            setShowAlert={setShowAlert}
-          />
-        ) : !isSuccess && showAlert ? (
-          <Alert
-            message={"Purchase Failed"}
-            transactionHash={null}
-            variant={"danger"}
-            setShowAlert={setShowAlert}
-          />
-        ) : (
-          <></>
-        )}
-        {items.length > 0 ? (
-          <div className="px-5 container">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-5">
-              {items.map((item, idx) => (
-                <div key={idx} className="overflow-hidden rounded shadow-lg">
-                  <img className="w-full" src={item.image} alt={item.name} />
-                  <div className="px-6 py-4">
-                    <div className="font-bold text-xl mb-2">{item.name}</div>
-                    <p className="text-gray-700 text-base">
-                      {item.description}
-                    </p>
+        </div>
+      )}
+
+      {items.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {items.map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+            >
+              <div className="aspect-w-1 aspect-h-1 w-full">
+                <img
+                  className="w-full h-full object-cover"
+                  src={item.image}
+                  alt={item.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/path/to/fallback/image.jpg";
+                  }}
+                />
+              </div>
+              <div className="p-4 flex-grow flex flex-col justify-between">
+                <div>
+                  <strong>Name:</strong>{" "}
+                  <div className="font-bold text-xl mb-2 truncate">
+                    {item.name}
                   </div>
-                  <div className="px-6 pt-4 pb-2">
-                    <button
-                      onClick={async () => {
-                        setShowAlert(false);
-                        await buyItem(
-                          provider,
-                          marketplace,
-                          item.itemId,
-                          account,
-                          dispatch
-                        );
-                        await loadMarketplaceItems();
-                        setShowAlert(true);
-                      }}
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Buy for {ethers.utils.formatEther(item.totalPrice)} ETH
-                    </button>
+                  <strong>Description:</strong>{" "}
+                  <p className="text-gray-700 text-sm mb-4 overflow-hidden line-clamp-3">
+                    {item.description}
+                  </p>
+                  <strong>Price:</strong>{" "}
+                  <div className="text-lg font-semibold text-blue-600 mb-4">
+                    {ethers.utils.formatEther(item.totalPrice)} ETH
                   </div>
                 </div>
-              ))}
+                <button
+                  onClick={async () => {
+                    setShowAlert(false);
+                    await buyItem(
+                      provider,
+                      marketplace,
+                      item.itemId,
+                      account,
+                      dispatch
+                    );
+                    await loadMarketplaceItems();
+                    setShowAlert(true);
+                  }}
+                  className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                >
+                  Buy Now
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <main className="p-4">
-            <h1 className="text-4xl font-bold">No listed assets</h1>
-          </main>
-        )}
-      </div>
-    );
-  }
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
+            No listed assets
+          </h1>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Home;

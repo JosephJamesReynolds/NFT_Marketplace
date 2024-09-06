@@ -1,5 +1,5 @@
+import React, { useState } from "react";
 import axios from "axios";
-import { useState } from "react";
 import Alert from "./Alert";
 import { useSelector, useDispatch } from "react-redux";
 import { makeItem } from "./store/interactions";
@@ -88,83 +88,110 @@ const Create = () => {
     setShowAlert(true);
   };
   return (
-    <div className="container mx-auto mt-1 py-1">
-      <div className="flex flex-wrap justify-center">
-        <main
-          role="main"
-          className="lg:w-full mx-auto py-10"
-          style={{ maxWidth: "1200px" }}
-        >
-          <div className="content mx-auto py-10">
-            {isCreating ? (
-              <Alert
-                message={"Creation Pending..."}
-                transactionHash={null}
-                variant={"info"}
-                setShowAlert={setShowAlert}
-              />
-            ) : isSuccess && showAlert ? (
-              <Alert
-                message={"Creation Successful"}
-                transactionHash={transactionHash}
-                variant={"success"}
-                setShowAlert={setShowAlert}
-              />
-            ) : !isSuccess && showAlert ? (
-              <Alert
-                message={"Creation Failed"}
-                transactionHash={null}
-                variant={"danger"}
-                setShowAlert={setShowAlert}
-              />
-            ) : (
-              <></>
-            )}
-            <div className="grid grid-cols-1 gap-4 py-10">
-              <input
-                type="file"
-                required
-                name="file"
-                onChange={uploadToIPFS}
-                className="col-span-1 border"
-              />
-              <input
-                onChange={(e) => setName(e.target.value)}
-                size="lg"
-                required
-                type="text"
-                placeholder="Name"
-                className="col-span-1 border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-              />
-
-              <textarea
-                onChange={(e) => setDescription(e.target.value)}
-                size="lg"
-                required
-                placeholder="Description"
-                className="col-span-1 border-2 border-gray-300 bg-white px-5 pr-16 rounded-lg text-sm focus:outline-none flex items-center justify-center"
-                style={{ height: "80px" }}
-              />
-
-              <input
-                onChange={(e) => setPrice(e.target.value)}
-                size="lg"
-                required
-                type="number"
-                placeholder="Price in ETH"
-                className="col-span-1 border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-              />
-              <div className="col-span-1">
-                <button
-                  onClick={createNFT}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Create & List NFT!
-                </button>
-              </div>
-            </div>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-center">
+          Create & List NFT
+        </h1>
+        <div className="mb-6">
+          {isCreating ? (
+            <Alert
+              message={"Creation Pending..."}
+              transactionHash={null}
+              variant={"info"}
+              setShowAlert={setShowAlert}
+            />
+          ) : isSuccess && showAlert ? (
+            <Alert
+              message={"Creation Successful"}
+              transactionHash={transactionHash}
+              variant={"success"}
+              setShowAlert={setShowAlert}
+            />
+          ) : !isSuccess && showAlert ? (
+            <Alert
+              message={"Creation Failed"}
+              transactionHash={null}
+              variant={"danger"}
+              setShowAlert={setShowAlert}
+            />
+          ) : null}
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="file-upload"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Upload Image
+            </label>
+            <input
+              id="file-upload"
+              type="file"
+              required
+              name="file"
+              onChange={uploadToIPFS}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
-        </main>
+          <div>
+            <label
+              htmlFor="nft-name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Name
+            </label>
+            <input
+              id="nft-name"
+              onChange={(e) => setName(e.target.value)}
+              required
+              type="text"
+              placeholder="NFT Name"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="nft-description"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Description
+            </label>
+            <textarea
+              id="nft-description"
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              placeholder="NFT Description"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              rows="3"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="nft-price"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Price (ETH)
+            </label>
+            <input
+              id="nft-price"
+              onChange={(e) => setPrice(e.target.value)}
+              required
+              type="number"
+              step="0.01"
+              placeholder="Price in ETH"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <button
+              onClick={createNFT}
+              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            >
+              Create & List NFT
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
