@@ -1,6 +1,8 @@
-require("@nomiclabs/hardhat-waffle");
+require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
+
 const privateKeys = process.env.PRIVATE_KEYS || "";
+
 module.exports = {
   solidity: "0.8.4",
   networks: {
@@ -15,5 +17,11 @@ module.exports = {
     sources: "./src/backend/contracts",
     cache: "./src/backend/cache",
     tests: "./src/backend/test",
+  },
+  gasReporter: {
+    enabled: true,
+    currency: "USD",
+    outputFile: "gas-report.txt",
+    noColors: true,
   },
 };
