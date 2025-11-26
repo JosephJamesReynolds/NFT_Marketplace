@@ -1,12 +1,14 @@
 const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-const toWei = (num) => ethers.utils.parseEther(num.toString()); // 1 ether == 10^18 wei;
-const fromWei = (num) => ethers.utils.formatEther(num);
+const toWei = (num) => ethers.parseEther(num.toString());
+const fromWei = (num) => ethers.formatEther(num);
 
 describe("NFTMarketplace", function () {
   let deployer, addr1, addr2, nft, marketplace;
   let feePercent = 1;
   let URI = "Sample URI";
+
   beforeEach(async function () {
     // Get contract factories
     const NFT = await ethers.getContractFactory("NFT");

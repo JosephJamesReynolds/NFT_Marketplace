@@ -1,33 +1,48 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
+# Environment variables
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+coverage.json
+
+# Production builds
+build/
+dist/
+
+# Hardhat files
+cache/
+artifacts/
+typechain/
+typechain-types/
+
+# Project-specific Hardhat paths
+src/backend/cache/
+src/backend/artifacts/
+
+# Gas reporter output
+gas-report.txt
+
+# Misc
+.DS_Store
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-node_modules
-.env
-coverage
-coverage.json
-typechain
+# IDE
+.vscode/
+.idea/
 
-#Hardhat files
-cache
-artifacts
+# Claude artifacts
+Marketplace_claude/
+*_claude/
