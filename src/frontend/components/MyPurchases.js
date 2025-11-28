@@ -133,7 +133,7 @@ export default function MyPurchases() {
                 <div>
                   <strong>Price:</strong>{" "}
                   <div className="text-lg font-semibold text-blue-600">
-                    {ethers.utils.formatEther(item.totalPrice)} ETH
+                    {ethers.formatEther(item.totalPrice)} ETH
                   </div>
                 </div>
               </div>

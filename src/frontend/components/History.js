@@ -36,7 +36,7 @@ const History = () => {
       </div>
       <div className="mb-2">
         <span className="font-semibold">Price:</span>{" "}
-        {ethers.utils.formatUnits(transaction.price.toString(), "ether")} ETH
+        {ethers.formatUnits(transaction.price.toString(), "ether")} ETH
       </div>
       <div className="mb-2">
         <span className="font-semibold">Buyer:</span>{" "}
@@ -119,10 +119,7 @@ const History = () => {
                   {transaction.itemId.toString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
-                  {ethers.utils.formatUnits(
-                    transaction.price.toString(),
-                    "ether"
-                  )}
+                  {ethers.formatUnits(transaction.price.toString(), "ether")}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
                   {transaction.buyer.slice(0, 5) +

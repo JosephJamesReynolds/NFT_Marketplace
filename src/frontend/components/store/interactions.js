@@ -17,7 +17,7 @@ import marketplaceAbi from "../../contractsData/Marketplace.json";
 import marketplaceAddress from "../../contractsData/Marketplace-address.json";
 
 export const loadProvider = (dispatch) => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const provider = new ethers.BrowserProvider(window.ethereum);
   dispatch(setProvider(provider));
   return provider;
 };
@@ -32,7 +32,7 @@ export const loadAccount = async (dispatch) => {
   const accounts = await window.ethereum.request({
     method: "eth_requestAccounts",
   });
-  const account = ethers.utils.getAddress(accounts[0]);
+  const account = ethers.getAddress(accounts[0]);
   dispatch(setAccount(account));
   return account;
 };
@@ -94,7 +94,7 @@ export const makeItem = async (
 
     transaction = await nft.connect(signer).approve(marketplace.address, id);
     await transaction.wait();
-    const listingPrice = ethers.utils.parseEther(price.toString());
+    const listingPrice = ethers.parseEther(price.toString());
     transaction = await marketplace
       .connect(signer)
       .makeItem(nft.address, id, listingPrice);

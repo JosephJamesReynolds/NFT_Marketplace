@@ -147,7 +147,7 @@ const Home = () => {
                 <div>
                   <strong>Price:</strong>{" "}
                   <div className="text-lg font-semibold text-blue-600 mb-4">
-                    {ethers.utils.formatEther(item.totalPrice)} ETH
+                    {ethers.formatEther(item.totalPrice)} ETH
                   </div>
                   <button
                     onClick={async () => {

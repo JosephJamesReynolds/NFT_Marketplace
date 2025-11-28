@@ -38,7 +38,7 @@ function renderSoldItems(items) {
               <div>
                 <strong>Price:</strong>{" "}
                 <span className="text-blue-600 font-semibold">
-                  {ethers.utils.formatEther(item.totalPrice)} ETH
+                  {ethers.formatEther(item.totalPrice)} ETH
                 </span>
               </div>
             </div>
@@ -175,7 +175,7 @@ export default function MyListedItems() {
                     <div>
                       <strong>Price:</strong>{" "}
                       <span className="text-blue-600 font-semibold">
-                        {ethers.utils.formatEther(item.totalPrice)} ETH
+                        {ethers.formatEther(item.totalPrice)} ETH
                       </span>{" "}
                     </div>
                   </div>
