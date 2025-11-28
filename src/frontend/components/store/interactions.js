@@ -85,19 +85,19 @@ export const makeItem = async (
     if (marketplace) {
       transaction = await nft
         .connect(signer)
-        .setApprovalForAll(marketplace.address, true);
+        .setApprovalForAll(marketplace.target, true);
       await transaction.wait();
     } else {
       console.error("marketplace is undefined");
       return;
     }
 
-    transaction = await nft.connect(signer).approve(marketplace.address, id);
+    transaction = await nft.connect(signer).approve(marketplace.target, id);
     await transaction.wait();
     const listingPrice = ethers.parseEther(price.toString());
     transaction = await marketplace
       .connect(signer)
-      .makeItem(nft.address, id, listingPrice);
+      .makeItem(nft.target, id, listingPrice);
     const receipt = await transaction.wait();
     dispatch(createSuccess(receipt.transactionHash));
 
