@@ -8,4 +8,10 @@ export const store = configureStore({
   reducer: { provider, nft, marketplace },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
+  devTools: {
+    serialize: {
+      replacer: (key, value) =>
+        typeof value === "bigint" ? value.toString() : value,
+    },
+  },
 });
