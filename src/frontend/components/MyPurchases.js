@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { loadAccount } from "./store/interactions";
 import { ethers } from "ethers";
@@ -18,50 +18,50 @@ export default function MyPurchases() {
     await loadAccount(dispatch);
   };
 
-  useEffect(() => {
-    const loadPurchasedItems = async () => {
-      if (!marketplace || !nft || !account) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const filter = marketplace.filters.Bought(
-          null,
-          null,
-          null,
-          null,
-          null,
-          account
-        );
-        const results = await marketplace.queryFilter(filter);
-        const purchases = await Promise.all(
-          results.map(async (i) => {
-            i = i.args;
-            const uri = await nft.tokenURI(i.tokenId);
-            const response = await fetch(uri);
-            const metadata = await response.json();
-            const totalPrice = await marketplace.getTotalPrice(i.itemId);
-            let purchasedItem = {
-              totalPrice,
-              price: i.price,
-              itemId: i.itemId,
-              name: metadata.name,
-              description: metadata.description,
-              image: metadata.image,
-            };
-            return purchasedItem;
-          })
-        );
-        setPurchases(purchases);
-      } catch (error) {
-        console.error("Failed to load purchases:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPurchasedItems();
+  const loadPurchasedItems = useCallback(async () => {
+    if (!marketplace || !nft || !account) {
+      setPurchases([]); // Clear stale data
+      setLoading(false);
+      return;
+    }
+    try {
+      const filter = marketplace.filters.Bought(
+        null,
+        null,
+        null,
+        null,
+        null,
+        account
+      );
+      const results = await marketplace.queryFilter(filter);
+      const purchases = await Promise.all(
+        results.map(async (i) => {
+          i = i.args;
+          const uri = await nft.tokenURI(i.tokenId);
+          const response = await fetch(uri);
+          const metadata = await response.json();
+          const totalPrice = await marketplace.getTotalPrice(i.itemId);
+          return {
+            totalPrice,
+            price: i.price,
+            itemId: i.itemId,
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image,
+          };
+        })
+      );
+      setPurchases(purchases);
+    } catch (error) {
+      console.error("Failed to load purchases:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [marketplace, nft, account]);
+
+  useEffect(() => {
+    loadPurchasedItems();
+  }, [loadPurchasedItems]);
 
   if (loading) {
     return (
