@@ -23,7 +23,8 @@ export const loadProvider = (dispatch) => {
 };
 
 export const loadNetwork = async (provider, dispatch) => {
-  const { chainId } = await provider.getNetwork();
+  const network = await provider.getNetwork();
+  const chainId = network.chainId.toString();
   dispatch(setNetwork(chainId));
   return chainId;
 };
@@ -99,7 +100,7 @@ export const makeItem = async (
       .connect(signer)
       .makeItem(nft.target, id, listingPrice);
     const receipt = await transaction.wait();
-    dispatch(createSuccess(receipt.transactionHash));
+    dispatch(createSuccess(receipt.hash));
 
     return receipt;
   } catch (error) {
@@ -128,10 +129,8 @@ export const buyItem = async (
     transaction = await marketplace
       .connect(signer)
       .purchaseItem(itemId, { value: totalPrice });
-    await transaction.wait();
-
     const receipt = await transaction.wait();
-    dispatch(buySuccess(receipt.transactionHash));
+    dispatch(buySuccess(receipt.hash));
   } catch (error) {
     console.error(error);
     dispatch(buyFailure());
@@ -149,7 +148,7 @@ export const loadAllItemsPurchased = async (
   const itemPurchasedStream = await marketplace.queryFilter("Bought", 0, block);
   const items = itemPurchasedStream.map((event) => {
     return {
-      hash: event.transactionHash,
+      hash: event.transactionHash || event.hash,
       itemId: event.args.itemId,
       nft: event.args.nft,
       tokenId: event.args.tokenId,
