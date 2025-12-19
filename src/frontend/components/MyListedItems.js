@@ -31,7 +31,7 @@ function renderSoldItems(items) {
                   {item.name}
                 </div>
                 <strong>Description:</strong>{" "}
-                <div className="overflow-hidden text-ellipsis whitespace-nowrap mb-2">
+                <div className="text-gray-700 text-sm mb-4 overflow-hidden line-clamp-3">
                   {item.description}
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function MyListedItems() {
                         {item.name}
                       </div>
                       <strong>Description:</strong>{" "}
-                      <div className="overflow-hidden text-ellipsis whitespace-nowrap mb-2">
+                      <div className="text-gray-700 text-sm mb-4 overflow-hidden line-clamp-3">
                         {item.description}
                       </div>
                     </div>
