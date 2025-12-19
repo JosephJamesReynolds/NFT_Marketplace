@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ethers } from "ethers";
 import { useSelector, useDispatch } from "react-redux";
 import { loadAccount } from "./store/interactions";
@@ -65,45 +65,66 @@ export default function MyListedItems() {
     await loadAccount(dispatch);
   };
 
-  useEffect(() => {
-    const loadListedItems = async () => {
-      if (!marketplace || !account) {
-        setLoading(false);
-        return;
+  const loadListedItems = useCallback(async () => {
+    if (!marketplace || !account) {
+      setListedItems([]); // Clear stale data
+      setSoldItems([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      const itemCount = await marketplace.itemCount();
+
+      // Fetch all items in parallel
+      const itemPromises = [];
+      for (let indx = 1; indx <= itemCount; indx++) {
+        itemPromises.push(
+          (async () => {
+            const i = await marketplace.items(indx);
+            if (i.seller.toLowerCase() === account.toLowerCase()) {
+              // Fetch URI and price in parallel
+              const [uri, totalPrice] = await Promise.all([
+                nft.tokenURI(i.tokenId),
+                marketplace.getTotalPrice(i.itemId),
+              ]);
+
+              const response = await fetch(uri);
+              const metadata = await response.json();
+
+              return {
+                totalPrice,
+                price: i.price,
+                itemId: i.itemId,
+                name: metadata.name,
+                description: metadata.description,
+                image: metadata.image,
+                sold: i.sold,
+              };
+            }
+            return null;
+          })()
+        );
       }
-      try {
-        const itemCount = await marketplace.itemCount();
-        let listedItems = [];
-        let soldItems = [];
-        for (let indx = 1; indx <= itemCount; indx++) {
-          const i = await marketplace.items(indx);
-          if (i.seller.toLowerCase() === account.toLowerCase()) {
-            const uri = await nft.tokenURI(i.tokenId);
-            const response = await fetch(uri);
-            const metadata = await response.json();
-            const totalPrice = await marketplace.getTotalPrice(i.itemId);
-            let item = {
-              totalPrice,
-              price: i.price,
-              itemId: i.itemId,
-              name: metadata.name,
-              description: metadata.description,
-              image: metadata.image,
-            };
-            listedItems.push(item);
-            if (i.sold) soldItems.push(item);
-          }
-        }
-        setListedItems(listedItems);
-        setSoldItems(soldItems);
-      } catch (error) {
-        console.error("Failed to load items:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadListedItems();
+
+      const results = await Promise.all(itemPromises);
+      const allItems = results.filter((item) => item !== null);
+
+      // Separate listed and sold
+      const listed = allItems.filter((item) => !item.sold);
+      const sold = allItems.filter((item) => item.sold);
+
+      setListedItems(listed);
+      setSoldItems(sold);
+    } catch (error) {
+      console.error("Failed to load items:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [marketplace, nft, account]);
+
+  useEffect(() => {
+    loadListedItems();
+  }, [loadListedItems]);
 
   if (loading) {
     return (
