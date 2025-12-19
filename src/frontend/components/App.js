@@ -1,4 +1,5 @@
 import { HashRouter, Routes, Route } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import { useDispatch } from "react-redux";
 import { useEffect, useCallback } from "react";
@@ -67,6 +68,7 @@ function App() {
             <Route path="/my-history" element={<History />} />
           </Routes>
         </div>
+        <SpeedInsights />
       </div>
     </HashRouter>
   );
