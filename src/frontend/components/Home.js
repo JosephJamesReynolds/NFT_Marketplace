@@ -33,24 +33,39 @@ const Home = () => {
     }
     try {
       const itemCount = await marketplace.itemCount();
-      let items = [];
+      const itemPromises = [];
       for (let i = 1; i <= itemCount; i++) {
-        const item = await marketplace.items(i);
-        if (!item.sold) {
-          const uri = await nft.tokenURI(item.tokenId);
-          const response = await fetch(uri);
-          const metadata = await response.json();
-          const totalPrice = await marketplace.getTotalPrice(item.itemId);
-          items.push({
-            totalPrice: totalPrice,
-            itemId: item.itemId,
-            seller: item.seller,
-            name: metadata.name,
-            description: metadata.description,
-            image: metadata.image,
-          });
-        }
+        itemPromises.push(
+          (async () => {
+            const item = await marketplace.items(i);
+            if (!item.sold) {
+              // Fetch URI and price in parallel for this item
+              const [uri, totalPrice] = await Promise.all([
+                nft.tokenURI(item.tokenId),
+                marketplace.getTotalPrice(item.itemId),
+              ]);
+
+              // Fetch metadata from IPFS
+              const response = await fetch(uri);
+              const metadata = await response.json();
+
+              return {
+                totalPrice,
+                itemId: item.itemId,
+                seller: item.seller,
+                name: metadata.name,
+                description: metadata.description,
+                image: metadata.image,
+              };
+            }
+            return null;
+          })()
+        );
       }
+
+      // Wait for ALL items to load in parallel
+      const results = await Promise.all(itemPromises);
+      const items = results.filter((item) => item !== null);
       setItems(items);
     } catch (error) {
       console.error("Failed to load marketplace items:", error);
