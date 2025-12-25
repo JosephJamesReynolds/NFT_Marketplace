@@ -1,0 +1,4 @@
+node_modules/
+src/backend/artifacts/
+src/backend/cache/
+coverage/
