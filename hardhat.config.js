@@ -15,10 +15,12 @@ module.exports = {
   },
   networks: {
     localhost: {},
-    sepolia: {
-      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEYS}`,
-      accounts: privateKeys.split(","),
-    },
+    ...(privateKeys && {
+      sepolia: {
+        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEYS}`,
+        accounts: privateKeys.split(","),
+      },
+    }),
   },
   paths: {
     artifacts: "./src/backend/artifacts",
